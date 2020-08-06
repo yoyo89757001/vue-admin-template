@@ -31,11 +31,14 @@ export default {
       // only show routes with meta.title
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
       const first = matched[0]
-
       if (!this.isDashboard(first)) {
-        matched = [{ path: '/dashboard', meta: { title: 'Dashboard' }}].concat(matched)
+       // console.log('添加了1什么')
+        //matched = [{ path: '/dashboard', meta: { title: '主页' }}].concat(matched)
       }
-
+      if (this.isPepoleinfo(first)) {//二级界面 ，最笨的方法，当当前路由是人员详情的时候，在前面添加人员管理面包屑
+       // console.log('添加了2什么')
+        matched = [{ path: '/table', meta: { title: '人员管理' }}].concat(matched)
+      }
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
     },
     isDashboard(route) {
@@ -43,7 +46,15 @@ export default {
       if (!name) {
         return false
       }
-      return name.trim().toLocaleLowerCase() === 'Dashboard'.toLocaleLowerCase()
+      console.log(name)
+      return name.trim().toLocaleLowerCase() === '主页'.toLocaleLowerCase()
+    },
+    isPepoleinfo(route) {
+      const name = route && route.name
+      if (!name) {
+        return false
+      }
+      return (name.trim().toLocaleLowerCase() === '员工详情'.toLocaleLowerCase() || name.trim().toLocaleLowerCase() === '访客详情'.toLocaleLowerCase() || name.trim().toLocaleLowerCase() === '新增人员'.toLocaleLowerCase())
     },
     pathCompile(path) {
       // To solve this problem https://github.com/PanJiaChen/vue-element-admin/issues/561

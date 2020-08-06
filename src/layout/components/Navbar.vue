@@ -5,25 +5,24 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
+      <!-- 可以配置 click 激活或者 hover 激活。//hover自动弹出下拉菜单 -->
+      <el-dropdown class="avatar-container" trigger="click" >
         <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              Home
+            <el-dropdown-item class="cc" command="a">
+              主页
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
+<!--          <a target="_blank" href="http://www.inteyeligence.com/">-->
+<!--            <el-dropdown-item divided command="b"><span style="display:block;">公司官网</span></el-dropdown-item>-->
+<!--          </a>-->
+          <!-- divided //分割线 -->
+          <el-dropdown-item divided command="c" @click.native="logout">
+            <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -32,9 +31,11 @@
 </template>
 
 <script>
+
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+
 
 export default {
   components: {
@@ -53,13 +54,18 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
+      console.log(this.$route.fullPath,'ooooooooo')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
-    }
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.cc{
+  text-align: center;
+}
+
 .navbar {
   height: 50px;
   overflow: hidden;

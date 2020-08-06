@@ -49,30 +49,30 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: 'Dashboard',
+      name: '主页',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '主页', icon: 'dashboard' }
     }]
   },
 
   {
-    path: '/example',
+    path: '/pepole',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+   //  redirect: '/example/table',
+     name: '人员管理',
+     meta: { title: '人员管理', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
+        path: '/table',
+        name: '员工',
         component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        meta: { title: '员工', icon: 'table' }
       },
       {
         path: 'tree',
-        name: 'Tree',
+        name: '访客',
         component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        meta: { title: '访客', icon: 'tree' }
       }
     ]
   },
@@ -82,69 +82,63 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'index',
-        name: 'Form',
+        path: '/form',
+        name: '设备配置',
         component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        meta: { title: '设备配置', icon: 'form' }
       }
     ]
   },
 
   {
+    path: '/pepoleinfo',
+    component: Layout,
+    hidden:true,
+    children: [
+      {
+        path: '/pepoleinfo',
+        name: '新增人员',
+        component: () => import('@/views/pepoleinfo/index'),
+        meta: { title: '新增人员' }
+      }
+    ]
+  },
+  {
+    path: '/pepoleinfo_visitors',
+    component: Layout,
+    hidden:true,
+    children: [
+      {
+        path: '/pepoleinfo_visitors',
+        name: '访客详情',
+        component: () => import('@/views/pepoleinfo_visitors/index'),
+        meta: { title: '访客详情' }
+      }
+    ]
+  },
+  {
+    path: '/pepoleinfo_employee',
+    component: Layout,
+    hidden:true,
+    children: [
+      {
+        path: '/pepoleinfo_employee',
+        name: '员工详情',
+        component: () => import('@/views/pepoleinfo_employee/index'),
+        meta: { title: '员工详情' }
+      }
+    ]
+  },
+  {
     path: '/nested',
     component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
+    //redirect: '/nested/menu1',
     children: [
       {
         path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
+        component: () => import('@/views/nested/index'), // Parent router-view
+        name: '关于我们',
+        meta: {title: '关于我们', icon: 'nested'}
       }
     ]
   },
@@ -154,8 +148,8 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'http://www.inteyeligence.com',
+        meta: { title: '公司官网', icon: 'link' }
       }
     ]
   },

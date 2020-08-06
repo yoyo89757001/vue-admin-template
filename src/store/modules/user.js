@@ -33,10 +33,19 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
+        const { data,errorMsg,errorCode } = response;
+        console.log(data,'登录返回的值',errorMsg,errorCode);
+       // const {result,token,msg} = JSON.parse(data);
+        const {result,token,msg} = data;
+        console.log(token,"token的值")
+        if (result===0){
+          console.log('登录返回的值')
+          reject(msg)
+        }else {
+          commit('SET_TOKEN', token)
+          setToken(token);
+          resolve()
+        }
       }).catch(error => {
         reject(error)
       })
@@ -48,13 +57,15 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-
+        console.log(data,"获取个人信息的DATA")
         if (!data) {
-          return reject('Verification failed, please Login again.')
+          return reject('验证失败，请重新登陆.')
         }
 
-        const { name, avatar } = data
-
+        const { resultData } = JSON.parse(data); //json字符串转json对象
+        console.log(resultData,"获取个人信息的resultData")
+        const { name, avatar} = JSON.parse(resultData); //json字符串转json对象
+        console.log(name,avatar,"获取个人信息")
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)

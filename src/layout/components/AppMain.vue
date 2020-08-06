@@ -7,10 +7,16 @@
 </template>
 
 <script>
+
+// import { concat } from '../../../mock/user'
+
 export default {
   name: 'AppMain',
   computed: {
     key() {
+      console.log(this.$route.path)
+    //  this.$message.success(this.$route.path)
+     // this.$message.success(window.location.href)
       return this.$route.path
     }
   }

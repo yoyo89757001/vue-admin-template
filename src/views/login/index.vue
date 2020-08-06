@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">智能识别系统</h3>
       </div>
 
       <el-form-item prop="username">
@@ -41,33 +41,34 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
     </el-form>
+
+    <div class="texx">
+      <span style="margin-right:20px;">瑞瞳智能科技</span>
+      <span> 粤 ICP 备 17085840 号-1</span>
+    </div>
+
   </div>
 </template>
-
 <script>
 import { validUsername } from '@/utils/validate'
+import { getPeople,deletePeople,getDeviceKey } from '@/api/people'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请检查你的用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码最少6位数'))
       } else {
         callback()
       }
@@ -75,7 +76,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '111111'
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -106,20 +107,31 @@ export default {
       })
     },
     handleLogin() {
+
+      // console.log("调用了顶顶顶:")
+      // getDeviceKey().then(response => {
+      //   this.$message.success(response.data + 'eeeeee')// 获取本机ip
+      // }).catch((err) => {
+      //   console.log("请求失败:"+err)
+      //   // this.$message.error(err + 'dddd')// 获取本机ip
+      // })
+
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+            this.$router.push({ path: this.redirect || '/' });// 成功之后重定向到首页
             this.loading = false
-          }).catch(() => {
+          }).catch((err) => {
+            this.$message.error(err) // 登录失败提示错误
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
+          console.log('请求失败!!')
           return false
         }
       })
+
     }
   }
 }
@@ -168,6 +180,20 @@ $cursor: #fff;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+  }
+  .texx{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 10px;
+
+    span {
+      &:first-of-type {
+        margin-right: 16px;
+      }
+    }
   }
 }
 </style>

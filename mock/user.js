@@ -26,7 +26,7 @@ const users = {
 module.exports = [
   // user login
   {
-    url: '/vue-admin-template/user/login',
+    url: '/app/login',
     type: 'post',
     response: config => {
       const { username } = config.body
@@ -35,21 +35,25 @@ module.exports = [
       // mock error
       if (!token) {
         return {
-          code: 60204,
+          errorCode: 60204,
           message: 'Account and password are incorrect.'
         }
       }
-
       return {
-        code: 20000,
-        data: token
+        errorCode: 200,
+        errorMsg:'ddd',
+        data:{
+          result:1,
+          token:'admin-token',
+          msg:'登陆成功'
+        }
       }
     }
   },
 
   // get user info
   {
-    url: '/vue-admin-template/user/info\.*',
+    url: '/app/getInfo',
     type: 'get',
     response: config => {
       const { token } = config.query
@@ -58,13 +62,13 @@ module.exports = [
       // mock error
       if (!info) {
         return {
-          code: 50008,
+          errorCode: 50008,
           message: 'Login failed, unable to get user details.'
         }
       }
 
       return {
-        code: 20000,
+        errorCode: 200,
         data: info
       }
     }
@@ -72,11 +76,11 @@ module.exports = [
 
   // user logout
   {
-    url: '/vue-admin-template/user/logout',
+    url: '/app/logout',
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        errorCode: 200,
         data: 'success'
       }
     }

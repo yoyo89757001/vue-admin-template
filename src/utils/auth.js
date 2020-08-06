@@ -7,6 +7,7 @@ export function getToken() {
 }
 
 export function setToken(token) {
+  console.log(token,'token的值')
   return Cookies.set(TokenKey, token)
 }
 
