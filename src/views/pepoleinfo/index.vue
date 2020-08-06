@@ -175,6 +175,7 @@
               if (Date.parse(this.formUp.endTime)<=Date.parse(this.formUp.startTime)){
                 this.$message.error("开始时间不能大于结束时间")
               }
+              //
               if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
                 this.$message.error("开始时间不能小于当前时间")
               }
