@@ -7,10 +7,11 @@
 <!--         el-container 用来分上下块，也可以用来分左右块  里面有el-header就是上下块-->
          <el-container style="width: 100%;height: 83vh" class="avatar-uploader">
           <el-header>
+
             <div style="text-align: center;margin-top: 20px">
               <el-upload
                 class="avatar-uploader"
-                action="https://jsonplaceholder.typicode.com/posts/"
+                action=""
                 :headers="myHeaders"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
@@ -25,6 +26,7 @@
               <el-form-item label="姓名:" prop="name">
                 <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
               </el-form-item>
+
               <el-form-item label="部门:">
                 <el-input v-model="formUp.department" placeholder="请填写部门"></el-input>
               </el-form-item>
@@ -43,6 +45,10 @@
                 </el-col>
               </el-form-item>
 
+              <el-form-item label="手机号码:">
+                <el-input v-model="formUp.phone" placeholder="请填写手机号码" oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"></el-input>
+              </el-form-item>
+
               <el-form-item label="人员类型:">
                 <el-radio-group @change="pepolechange" v-model="formUp.peopleType">
                   <el-radio :label=1>内部员工</el-radio>
@@ -53,11 +59,11 @@
               <el-form-item label="过期时间:" required label-width="14%" :hidden="pepoleTypeDisabled">
                 <el-row >
                   <el-col :span="11">
-                    <el-date-picker type="datetime" placeholder="开始日期" v-model="formUp.startTime"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="开始日期" v-model="formUp.startTime" style="width: 100%"></el-date-picker>
                   </el-col>
-                  <el-col class="line" :span="2" style="text-align: center">-</el-col>
+                  <el-col class="line" :span="2" style="text-align: center;">-</el-col>
                   <el-col :span="11">
-                    <el-date-picker  type="datetime" placeholder="结束时间" v-model="formUp.endTime" ></el-date-picker>
+                    <el-date-picker  type="datetime" placeholder="结束时间" v-model="formUp.endTime" style="width: 100%" ></el-date-picker>
                   </el-col>
                 </el-row>
               </el-form-item>
@@ -122,11 +128,12 @@
           startTime: '',
           endTime:'',
           remarks: '',
+          phone:'',
         },
         rules: {
           name: [
-            { required: true, message: '请输入活动名称', trigger: 'blur' },
-            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+            { required: true, message: '请输入人员姓名', trigger: 'blur' },
+            { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
           ],
         }
       }
@@ -152,9 +159,9 @@
         let fd = new FormData();//转成FormData格式上传
         fd.append('file', file);
         ax.post('http://192.168.2.19:8080/j030_picc_ceshi/public/weixin/index/upload_img', fd).then((res) => {
-
         }, (res) => {
           console.log(res,"ftttttttt")
+          this.$message.error(res,'上传返回的值');
         });
 
         return false;
