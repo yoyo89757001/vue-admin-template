@@ -160,7 +160,7 @@
         fd.append('file', file);
         ax.post('http://192.168.2.19:8080/j030_picc_ceshi/public/weixin/index/upload_img', fd).then((res) => {
         }, (res) => {
-          console.log(res,"ftttttttt")
+          console.log(res,"ftttttttt");
           this.$message.error(res,'上传返回的值');
         });
 
