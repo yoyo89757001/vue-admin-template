@@ -211,10 +211,10 @@
                 //this.totalNum=this.totalNum-1;
                 //this.tableDataTemp.splice(row,1);
                 console.log(`当前页:`,this.currentPage,this.tableDataTemp.length);
-                if (this.tableDataTemp.length===0 && this.currentPage>1){
-                  this.handleCurrentChange(this.currentPage-1)
+                if (this.tableDataTemp.length===0 && this.currentPage>1){ //每次删除后重新请求，因为有分页，最后一条的时候数据不好处理，会乱，
+                  this.handleCurrentChange(this.currentPage-1)//请求前一页
                 }else {
-                  this.handleCurrentChange(this.currentPage)
+                  this.handleCurrentChange(this.currentPage)////请求当前页
                 }
 
               }else {
