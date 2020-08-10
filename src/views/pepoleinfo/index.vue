@@ -8,21 +8,27 @@
          <el-container style="width: 100%;height: 83vh" class="avatar-uploader">
           <el-header>
 
-            <div style="text-align: center;margin-top: 20px">
-              <el-upload
-                class="avatar-uploader"
-                action=""
-                :headers="myHeaders"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
-              <p style="font-size: 18px;color: #409EFF">上传底库</p>
+            <div style="display: flex;justify-content: center;align-items: center;margin-top: 20%">
+              <div style="text-align: center;position: absolute;z-index: 2">
+                <el-upload
+                  class="avatar-uploader"
+                  action=""
+                  :headers="myHeaders"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">
+                  <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+                <p style="font-size: 18px;color: #409EFF">上传底库</p>
+              </div>
+<!--              <div style="position: absolute;z-index: 99;margin-top: -5%" v-show="loading">-->
+<!--                <el-avatar v-loading="loading"></el-avatar>-->
+<!--              </div>-->
             </div>
 
-            <el-form ref="formUp" :model="formUp" label-width="80px" :rules="rules">
+
+            <el-form ref="formUp" :model="formUp" label-width="80px" :rules="rules" style="position: absolute;margin-top: 10%" v-loading="loading">
               <el-form-item label="姓名:" prop="name">
                 <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
               </el-form-item>
@@ -31,7 +37,7 @@
                 <el-input v-model="formUp.department" placeholder="请填写部门"></el-input>
               </el-form-item>
 
-              <el-form-item label="性别:">
+              <el-form-item label="性别:" prop="sex">
                 <el-col :span="9">
                   <el-select v-model="formUp.sex" placeholder="-请选择-">
                     <el-option label="男" value="1"></el-option>
@@ -56,7 +62,7 @@
                 </el-radio-group>
               </el-form-item>
 
-              <el-form-item label="过期时间:" required label-width="14%" :hidden="pepoleTypeDisabled">
+              <el-form-item label="过期时间:" required label-width="15%" :hidden="pepoleTypeDisabled">
                 <el-row >
                   <el-col :span="11">
                     <el-date-picker type="datetime" placeholder="开始日期" v-model="formUp.startTime" style="width: 100%"></el-date-picker>
@@ -118,11 +124,13 @@
         myId:this.$route.query.id,//拿到上个界面传过来的参数
         imageUrl:'',
         myHeaders: {'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST','Access-Control-Allow-Headers':'x-requested-with,content-type'},
+        widthP:100,
+        loading:false,
+        file:'',
         formUp: {
           name: '',
           department: '',
-          sex:"男",
-          radio: 1,
+          sex:'',
           birthday: '',
           peopleType:1,
           startTime: '',
@@ -135,34 +143,30 @@
             { required: true, message: '请输入人员姓名', trigger: 'blur' },
             { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
           ],
+          sex: [{ required: true, message: '请选择性别', trigger: 'blur' }],
         }
       }
     },
     methods: {
       handleAvatarSuccess(res, file) {
-        console.log(res,"res");
-        this.imageUrl = URL.createObjectURL(file.raw);
+        console.log(res,"自带的上传成功回调");//自带的上传成功回调,暂时不用他
+
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
+        const isPNG = file.type === 'image/png';
         const isLt2M = file.size / 1024 / 1024 < 2;
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
-          return true;
+        if (!isJPG && !isPNG) {
+          this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+          return false;
         }
         if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!');
-          return true;
+          this.$message.error('图片不能超过 2MB 请裁剪后上传');
+          return false;
         }
-
-        let fd = new FormData();//转成FormData格式上传
-        fd.append('file', file);
-        ax.post('http://192.168.2.19:8080/j030_picc_ceshi/public/weixin/index/upload_img', fd).then((res) => {
-        }, (res) => {
-          console.log(res,"ftttttttt");
-          this.$message.error(res,'上传返回的值');
-        });
+        this.file=file;
+        this.imageUrl = URL.createObjectURL(file);
 
         return false;
       },
@@ -172,30 +176,75 @@
       },
       onSubmit(formName){//提交
         this.$refs[formName].validate((valid) => {
-          console.log(this.formUp.startTime);
-          console.log( Date.parse(this.formUp.startTime));//转成时间戳
-          console.log( Date.parse(new Date()));//转成时间戳
-          if (!this.pepoleTypeDisabled){//员工
+          // console.log(this.formUp.startTime);
+          // console.log( Date.parse(this.formUp.startTime));//转成时间戳
+          // console.log( Date.parse(new Date()));//转成时间戳
+          if (this.file===''){
+            this.$message.error("请选择上传底库");
+            return
+          }
+           if (!this.pepoleTypeDisabled){
             if (this.formUp.startTime==='' || this.formUp.endTime===''){
-              this.$message.error("过期时间不能为空")
+              this.$message.error("过期时间不能为空");
+              return
             }else {
               if (Date.parse(this.formUp.endTime)<=Date.parse(this.formUp.startTime)){
-                this.$message.error("开始时间不能大于结束时间")
+                this.$message.error("开始时间不能大于结束时间");
+                return
               }
               if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
-                this.$message.error("开始时间不能小于当前时间")
+                this.$message.error("开始时间不能小于当前时间");
+                return
               }
-
             }
-
-          }else {//访客
-
-
-          }
-
-
+           }
           if (valid) {
-            alert('submit!');
+
+            let fd = new FormData();//转成FormData格式上传
+
+            console.log('生日', Date.parse(this.formUp.birthday));
+            fd.append('file', this.file);
+            fd.append('name',this.formUp.name);
+            fd.append('department', this.formUp.department);
+            fd.append('sex', this.formUp.sex);
+            fd.append('peopleType', this.formUp.peopleType);
+            fd.append('birthday', Date.parse(this.formUp.birthday));
+            fd.append('startTime', Date.parse(this.formUp.startTime));
+            fd.append('endTime', Date.parse(this.formUp.endTime));
+            fd.append('phone', this.formUp.phone);
+            fd.append('remarks', this.formUp.remarks);
+
+            this.loading=true;
+            var mthis=this;
+            ax({
+              method: 'post',
+              url: '/app/person/create2',
+              timeout:30000,
+              data:fd,
+            }).then(function(res) {
+              console.log(res.data,"上传成功");
+              const {errorCode,errorMsg,data} = res.data;
+              if (errorCode===200){
+                const {code,msg} = JSON.parse(data);
+                if (code===1){
+                  mthis.$message.success('添加成功');
+                  mthis.$router.push('/table')
+                }else {
+                  mthis.$message.error(msg);
+                }
+              }else {
+                mthis.$message.error(errorMsg);
+              }
+            }).catch(function (error) {
+              console.log("error调用",error);
+              mthis.$message.error('上传失败:'+error.message)
+              console.log(window.location.host)
+
+            }).finally(function () {
+              console.log("finally调用");
+              mthis.loading=false;
+            });
+
           } else {
             console.log('error submit!!');
             return false;

@@ -153,7 +153,7 @@
           this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
           if (type===2){//删除数据
             this.tableData.splice(row,1);
-            this.isSC=false;
+
           }
         }else {//编辑带上id
           this.$router.replace('/pepoleinfo_visitors?id='+this.tableData[row].id)
@@ -177,6 +177,7 @@
           this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
           if (type===2){//删除数据
             console.log("删除所有选中");
+            this.isSC=false;
           }
         }
       },

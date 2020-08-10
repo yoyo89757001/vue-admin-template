@@ -1,17 +1,17 @@
 import request from '@/utils/request'
 
-export function getPeople(params) {
+export function getPeople(data) {
   return request({
-    url: '/vue-admin-template/table/list',
+    url: 'app/person/findByPage',
     method: 'post',
-    params
+    data
   })
 }
 
 export function deletePeople(id) {
   return request({
-    url: '/vue-admin-template/table/list',
-    method: 'post',
+    url: '/app/person/deleteone',
+    method: 'get',
     params:{id}
   })
 }
