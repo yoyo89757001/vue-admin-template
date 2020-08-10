@@ -214,7 +214,7 @@
                 if (this.tableDataTemp.length===0 && this.currentPage>1){ //每次删除后重新请求，因为有分页，最后一条的时候数据不好处理，会乱，
                   this.handleCurrentChange(this.currentPage-1)//请求前一页
                 }else {
-                  this.handleCurrentChange(this.currentPage)////请求当前页
+                  this.handleCurrentChange(this.currentPage)////请求当前页d
                 }
 
               }else {
