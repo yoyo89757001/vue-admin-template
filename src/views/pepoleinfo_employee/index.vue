@@ -1,147 +1,288 @@
 <template>
   <div style="display: flex;justify-content: center;margin-top: 40px">
-   <el-card style="width: 80%;height: 840px;">
-     <el-row >
-       <!--     1大块 el-row 用来分左右两大块 el-col每个子小块-->
-       <el-col :span="12" :offset="6">
-<!--         el-container 用来分上下块，也可以用来分左右块  里面有el-header就是上下块-->
-         <el-container style="width: 100%;height: 83vh" class="avatar-uploader">
-          <el-header>
-            <div style="text-align: center;margin-top: 20px">
-              <el-upload
-                class="avatar-uploader"
-                action="https://jsonplaceholder.typicode.com/posts/"
-                :headers="myHeaders"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
-              <p style="font-size: 18px;color: #409EFF">上传底库</p>
-            </div>
+    <el-card style="width: 80%;height: 900px;margin-bottom: 30px" v-loading="loading">
+      <el-row >
+        <!--     1大块 el-row 用来分左右两大块 el-col每个子小块-->
+        <el-col :span="12" :offset="6">
+          <!--         el-container 用来分上下块，也可以用来分左右块  里面有el-header就是上下块-->
+          <el-container style="width: 100%;height: 83vh" class="avatar-uploader">
+            <el-header>
 
-            <el-form ref="form" :model="form" label-width="80px">
-              <el-form-item label="姓名:">
-                <el-input v-model="form.name" placeholder="请填写姓名"></el-input>
-              </el-form-item>
-              <el-form-item label="部门:">
-                <el-input v-model="form.department" placeholder="请填写部门"></el-input>
-              </el-form-item>
-
-              <el-form-item label="性别:">
-                <el-col :span="9">
-                  <el-select v-model="form.region" placeholder="-请选择-">
-                    <el-option label="男" value="1"></el-option>
-                    <el-option label="女" value="2"></el-option>
-                  </el-select>
-                </el-col>
-                <el-col :span="13" :offset=2>
-                  <el-form-item label="出生日期:">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
-                  </el-form-item>
-                </el-col>
-              </el-form-item>
+              <div style="display: flex;justify-content: center;align-items: center;margin-top: 20%">
+                <div style="text-align: center;position: absolute;z-index: 2">
+                  <el-upload
+                    class="avatar-uploader"
+                    action=""
+                    :headers="myHeaders"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
+                  <p style="font-size: 18px;color: #409EFF">上传底库</p>
+                </div>
+                <!--              <div style="position: absolute;z-index: 99;margin-top: -5%" v-show="loading">-->
+                <!--                <el-avatar v-loading="loading"></el-avatar>-->
+                <!--              </div>-->
+              </div>
 
 
+              <el-form ref="formUp" :model="formUp" label-width="80px" :rules="rules" style="position: absolute;margin-top: 10%">
+                <el-form-item label="姓名:" prop="name">
+                  <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
+                </el-form-item>
 
-              <el-form-item label="备注信息">
-                <el-input type="textarea" v-model="form.desc" placeholder="请输入备注信息"></el-input>
-              </el-form-item>
-              <el-form-item style="text-align: center;margin-top: 20px">
-                <el-button type="danger" style="margin-right: 30px;width: 100px;height: 50px" @click="onCancel">取消</el-button>
-                <el-button type="primary"  style="width: 100px;height: 50px" @click="onSubmit">提交</el-button>
-              </el-form-item>
-            </el-form>
+                <el-form-item label="部门:">
+                  <el-input v-model="formUp.department" placeholder="请填写部门"></el-input>
+                </el-form-item>
 
-          </el-header>
-         </el-container>
-       </el-col>
+                <el-form-item label="性别:" prop="sex">
+                  <el-col :span="9">
+                    <el-select v-model="formUp.sex" placeholder="-请选择-">
+                      <el-option label="男" value="1"></el-option>
+                      <el-option label="女" value="2"></el-option>
+                    </el-select>
+                  </el-col>
+                  <el-col :span="13" :offset=2>
+                    <el-form-item label="出生日期:">
+                      <el-date-picker type="date" placeholder="选择日期" v-model="formUp.birthday" style="width: 100%;"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </el-form-item>
 
-     </el-row>
+                <el-form-item label="IC卡号:">
+                  <el-row >
+                    <el-col :span="18">
+                      <el-input v-model="formUp.icCard" placeholder="点击绑定按钮后,再到机器刷卡" readonly="readonly"></el-input>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-button type="primary" :loading="loadingBD" style="width: 100px;height: 40px;text-align: center;margin-left: 24px" @click="onBind">绑定</el-button>
+                    </el-col>
+                  </el-row>
+                </el-form-item>
 
-   </el-card>
+                <el-form-item label="手机号码:">
+                  <el-input v-model="formUp.phone" placeholder="请填写手机号码" oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"></el-input>
+                </el-form-item>
+
+
+                <el-form-item label="备注信息">
+                  <el-input type="textarea" v-model="formUp.remarks" placeholder="请输入备注信息"></el-input>
+                </el-form-item>
+                <el-form-item style="text-align: center;margin-top: 20px">
+                  <el-button type="danger" style="margin-right: 30px;width: 100px;height: 50px" @click="onCancel">取消</el-button>
+                  <el-button type="primary"  style="width: 100px;height: 50px" @click="onSubmit('formUp')">提交</el-button>
+                </el-form-item>
+              </el-form>
+
+            </el-header>
+          </el-container>
+        </el-col>
+
+      </el-row>
+
+    </el-card>
 
   </div>
 </template>
 
 <script>
   import  ax from 'axios'
+  import {getPeopleInfo} from '@/api/people'
+  import Moment from "moment";
+
 
   export default {
     created() {
 
     },
     mounted() {
-      console.log(this.myId+"myId");
-      if (this.myId==null){
-        console.log('是新增人员')
+      console.log(this.myId,"员工传过来的ID");
+      if (this.myId!==undefined){
+        var mythis=this;
+        getPeopleInfo(this.myId).then(response => {
+          mythis.loading=false;
+          console.log("个人信息返回",response);
+          const  {data} =response;
+          mythis.formUp =JSON.parse(data);
+          mythis.imageUrl=mythis.formUp.photo;
+          console.log(mythis.formUp,"人员信息");
 
-      }else {//网络请求个人信息
+        }).catch((err) => {
+          mythis.loadingBD=false;
+          console.log("请求失败:"+err)
+        });
 
+      }else {
+        this.$message.error('获取人员信息失败')
       }
 
     },
     data() {
+      const validateUsername = (rule, value, callback) => {
+        if (!validUsername(value)) {
+          callback(new Error('请检查你的用户名'))
+        } else {
+          callback()
+        }
+      };
       return {
         pepoleTypeDisabled:true,
         myId:this.$route.query.id,//拿到上个界面传过来的参数
-        form: {
+        imageUrl:'',
+        myHeaders: {'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST','Access-Control-Allow-Headers':'x-requested-with,content-type'},
+        widthP:100,
+        loading:true,
+        loadingBD:false,
+        file:'',
+        formUp: {
           name: '',
           department: '',
-          radio: 1,
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: '',
+          sex:'',
+          birthday: '',
+          peopleType:1,
+          startTime: '',
+          endTime:'',
+          remarks: '',
+          phone:'',
+          icCard:'',
+          sid:'',
         },
-        form1:{
-          date1: '',
-          date2: '',
-        },
-        imageUrl:'',
-        myHeaders: {'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST','Access-Control-Allow-Headers':'x-requested-with,content-type'}
+        rules: {
+          name: [
+            { required: true, message: '请输入人员姓名', trigger: 'blur' },
+            { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
+          ],
+          sex: [{ required: true, message: '请选择性别', trigger: 'blur' }],
+        }
       }
     },
     methods: {
       handleAvatarSuccess(res, file) {
-        console.log(res,"res");
-        this.imageUrl = URL.createObjectURL(file.raw);
+        console.log(res,"自带的上传成功回调");//自带的上传成功回调,暂时不用他
+
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
+        const isPNG = file.type === 'image/png';
         const isLt2M = file.size / 1024 / 1024 < 2;
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
-          return true;
+        if (!isJPG && !isPNG) {
+          this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+          return false;
         }
         if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!');
-          return true;
+          this.$message.error('图片不能超过 2MB 请裁剪后上传');
+          return false;
         }
-
-        let fd = new FormData();//转成FormData格式上传
-        fd.append('file', file);
-        ax.post('http://192.168.2.19:8080/j030_picc_ceshi/public/weixin/index/upload_img', fd).then((res) => {
-
-        }, (res) => {
-          console.log(res,"ftttttttt")
-        });
+        this.file=file;
+        this.imageUrl = URL.createObjectURL(file);
 
         return false;
       },
-      pepolechange(){//选择人员类型
-        console.log(this.form.radio,"dfsdsfsfds");
-        this.pepoleTypeDisabled = this.form.radio !== 2;
-      },
-      onSubmit(){//提交
+      onSubmit(formName){//提交
+        this.$refs[formName].validate((valid) => {
+          // console.log(this.formUp.startTime);
+          // console.log( Date.parse(this.formUp.startTime));//转成时间戳
+          // console.log( Date.parse(new Date()));//转成时间戳
 
+          if (!this.pepoleTypeDisabled){
+            if (this.formUp.startTime==='' || this.formUp.endTime===''){
+              this.$message.error("过期时间不能为空");
+              return
+            }else {
+              if (Date.parse(this.formUp.endTime)<=Date.parse(this.formUp.startTime)){
+                this.$message.error("开始时间不能大于等于结束时间");
+                return
+              }
+              if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
+                this.$message.error("开始时间不能小于当前时间");
+                return
+              }
+            }
+          }
+          if (valid) {
+
+            let fd = new FormData();//转成FormData格式上传
+
+            console.log('生日', Date.parse(this.formUp.birthday));
+            fd.append('file', this.file);
+            fd.append('id',this.formUp.sid);
+            fd.append('name',this.formUp.name);
+            fd.append('department', this.formUp.department);
+            fd.append('sex', this.formUp.sex);
+            fd.append('peopleType', this.formUp.peopleType);
+            fd.append('birthday', Date.parse(this.formUp.birthday));
+            fd.append('startTime', Date.parse(this.formUp.startTime));
+            fd.append('endTime', Date.parse(this.formUp.endTime));
+            fd.append('phone', this.formUp.phone);
+            fd.append('remarks', this.formUp.remarks);
+            fd.append('icCard', this.formUp.icCard);
+            this.loading=true;
+            var mthis=this;
+            ax({
+              method: 'post',
+              url: '/app/person/updata2',
+              timeout:30000,
+              data:fd,
+            }).then(function(res) {
+              console.log(res.data,"上传成功");
+              const {errorCode,errorMsg,data} = res.data;
+              if (errorCode===200){
+                const {code,msg} = JSON.parse(data);
+                if (code===1){
+                  mthis.$message.success('添加成功');
+                  if (mthis.formUp.peopleType===1){
+                    mthis.$router.push('/table')
+                  }else {
+                    mthis.$router.push('/tree')
+                  }
+
+                }else {
+                  mthis.$message.error(msg);
+                }
+              }else {
+                mthis.$message.error(errorMsg);
+              }
+            }).catch(function (error) {
+              console.log("error调用",error);
+              mthis.$message.error('上传失败:'+error.message)
+              console.log(window.location.host)
+
+            }).finally(function () {
+              console.log("finally调用");
+              mthis.loading=false;
+            });
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
       onCancel(){//取消
         this.$router.replace('/table')
+      },
+      onBind(){//绑定ic卡
+        this.loadingBD=true;
+        var mythis=this;
+        openCard().then(response => {
+          mythis.loadingBD=false;
+          console.log("卡信息返回",response);
+          const  {data} =response;
+          const  {code,card,msg} =JSON.parse(data);
+          console.log(code,card,msg,"读取卡信息");
+          if (code===1){
+            mythis.formUp.icCard=card;
+          }else {
+            mythis.$message.error(msg)
+          }
+        }).catch((err) => {
+          mythis.loadingBD=false;
+          console.log("请求失败:"+err)
+        });
+
       }
     }
   }

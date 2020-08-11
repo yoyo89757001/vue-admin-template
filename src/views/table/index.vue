@@ -190,16 +190,16 @@
     methods: {
       handleSelectionChange(val) {
         this.isSC = !(val.length <= 0);//控制删除选中的按钮的显示隐藏
-
         this.multipleSelection = val;
-        console.log("multipleSelection.size:"+this.multipleSelection.length)
-        this.multipleSelection.forEach(va=>{
-          console.log("val:"+va.id)
-        });
+        //console.log("multipleSelection.size:"+this.multipleSelection.length)
+        // this.multipleSelection.forEach(va=>{
+        //   console.log("val:"+va.id)
+        // });
       },
       handleClick(row,type) {//删除单个
-       // console.log(row);
+        //console.log(row);
         //console.log("列:"+row+type);
+        var mythis=this;
         if (type===2 || type===3){//2删除 3取消
           this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
           if (type===2){//删除数据
@@ -209,16 +209,18 @@
               const  {code,msg} =JSON.parse(data);
               if (code===1){
                 //this.totalNum=this.totalNum-1;
-                //this.tableDataTemp.splice(row,1);
-                console.log(`当前页:`,this.currentPage,this.tableDataTemp.length);
-                if (this.tableDataTemp.length===0 && this.currentPage>1){ //每次删除后重新请求，因为有分页，最后一条的时候数据不好处理，会乱，
-                  this.handleCurrentChange(this.currentPage-1)//请求前一页
+                mythis.tableDataTemp.splice(row,1); //注意，
+              //  console.log(`当前页:`,this.currentPage,(this.tableDataTemp.length));
+                if (mythis.tableDataTemp.length===0 && mythis.currentPage>1){ //每次删除后重新请求，因为有分页，最后一条的时候数据不好处理，会乱，
+                  mythis.handleCurrentChange(mythis.currentPage-1);//请求前一
+                 // console.log('减一');
                 }else {
-                  this.handleCurrentChange(this.currentPage)////请求当前页
+                 // console.log('没减一');
+                  mythis.handleCurrentChange(mythis.currentPage)////请求当前页
                 }
 
               }else {
-                this.$message.error(msg)
+                mythis.$message.error(msg)
               }
             }).catch((err) => {
               console.log("请求失败:"+err)
@@ -226,18 +228,19 @@
           }
         }else {//编辑,带上id
           this.$router.replace('/pepoleinfo_employee?id='+this.tableDataTemp[row].id)
+          // myId:this.$route.query.id,//拿到上个界面传过来的参数
         }
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+       // console.log(`每页 ${val} 条`);
         this.pageSize = val;    //动态改变
       },
       handleCurrentChange(val) {//点击分页时调用的方法
-        console.log(`当前页回调方法: ${val}`);
+       // console.log(`当前页回调方法: ${val}`);
         this.currentPage = val;    //当前页的值，动态改变
         this.tableDataTemp=[];//先清掉数据
         getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
-          console.log("获取人员列表",response);
+          //console.log("获取人员列表",response);
           const  {data,errorCode} =response;
           const  {requestData,total} =JSON.parse(data);
           this.totalNum=total;
@@ -259,13 +262,38 @@
         });
       },
       handleClickall(type) {//删除所有选中
-        console.log(type);
+        //console.log(type);
         if (type===2 || type===3){
           this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
           if (type===2){//删除数据
-            console.log("删除所有选中");
+           // console.log("删除所有选中");
             this.isSC=false;
-
+            var ids='';
+            var mythis=this;
+            this.multipleSelection.forEach(function (x,index) {
+              ids=ids+x.id;
+              if (index!==mythis.multipleSelection.length-1){
+                ids=ids+',';
+              }
+            });
+            deletePeople(ids).then(response => {
+             // console.log("删除人员返回",response);
+              const  {data} =response;
+              const  {code,msg} =JSON.parse(data);
+              if (code===1){
+                if (mythis.multipleSelection.length===mythis.tableDataTemp.length && mythis.currentPage>1){ //每次删除后重新请求，因为有分页，最后一条的时候数据不好处理，会乱，//就是全选了 需要减一页
+                  mythis.handleCurrentChange(mythis.currentPage-1);//请求前一
+                  //删除后重新调用获取列表方法
+                }else {
+                  //删除后重新调用获取列表方法
+                  mythis.handleCurrentChange(mythis.currentPage)////请求当前页
+                }
+              }else {
+                mythis.$message.error(msg)
+              }
+            }).catch((err) => {
+              console.log("请求失败:"+err)
+            });
           }
         }
       },

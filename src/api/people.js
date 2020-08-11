@@ -16,6 +16,21 @@ export function deletePeople(id) {
   })
 }
 
+export function getPeopleInfo(id) {
+  return request({
+    url: '/app/person/find',
+    method: 'get',
+    params:{id}
+  })
+}
+
+export function openCard() {
+  return request({
+    url: '/app/icCard/openCard',
+    method: 'get',
+  })
+}
+
 export function getDeviceKey(params) {
   return request({
     url: '/app/getDeviceKey',

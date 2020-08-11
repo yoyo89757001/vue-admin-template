@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex;justify-content: center;margin-top: 40px">
-   <el-card style="width: 80%;height: 840px;">
+   <el-card style="width: 80%;height: 900px;margin-bottom: 30px">
      <el-row >
        <!--     1大块 el-row 用来分左右两大块 el-col每个子小块-->
        <el-col :span="12" :offset="6">
@@ -51,6 +51,17 @@
                 </el-col>
               </el-form-item>
 
+              <el-form-item label="IC卡号:">
+                <el-row >
+                  <el-col :span="18">
+                    <el-input v-model="formUp.icCard" placeholder="点击绑定按钮后,再到机器刷卡" readonly="readonly"></el-input>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-button type="primary" :loading="loadingBD" style="width: 100px;height: 40px;text-align: center;margin-left: 24px" @click="onBind">绑定</el-button>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+
               <el-form-item label="手机号码:">
                 <el-input v-model="formUp.phone" placeholder="请填写手机号码" oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"></el-input>
               </el-form-item>
@@ -96,6 +107,9 @@
 
 <script>
   import  ax from 'axios'
+  import {openCard} from '@/api/people'
+  import Moment from "moment";
+
 
   export default {
     created() {
@@ -126,6 +140,7 @@
         myHeaders: {'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST','Access-Control-Allow-Headers':'x-requested-with,content-type'},
         widthP:100,
         loading:false,
+        loadingBD:false,
         file:'',
         formUp: {
           name: '',
@@ -137,6 +152,7 @@
           endTime:'',
           remarks: '',
           phone:'',
+          icCard:'',
         },
         rules: {
           name: [
@@ -189,7 +205,7 @@
               return
             }else {
               if (Date.parse(this.formUp.endTime)<=Date.parse(this.formUp.startTime)){
-                this.$message.error("开始时间不能大于结束时间");
+                this.$message.error("开始时间不能大于等于结束时间");
                 return
               }
               if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
@@ -213,7 +229,7 @@
             fd.append('endTime', Date.parse(this.formUp.endTime));
             fd.append('phone', this.formUp.phone);
             fd.append('remarks', this.formUp.remarks);
-
+            fd.append('icCard', this.formUp.icCard);
             this.loading=true;
             var mthis=this;
             ax({
@@ -228,7 +244,12 @@
                 const {code,msg} = JSON.parse(data);
                 if (code===1){
                   mthis.$message.success('添加成功');
-                  mthis.$router.push('/table')
+                  if (mthis.formUp.peopleType===1){
+                    mthis.$router.push('/table')
+                  }else {
+                    mthis.$router.push('/tree')
+                  }
+
                 }else {
                   mthis.$message.error(msg);
                 }
@@ -253,6 +274,26 @@
       },
       onCancel(){//取消
         this.$router.replace('/table')
+      },
+      onBind(){//绑定ic卡
+        this.loadingBD=true;
+        var mythis=this;
+        openCard().then(response => {
+          mythis.loadingBD=false;
+          console.log("卡信息返回",response);
+          const  {data} =response;
+          const  {code,card,msg} =JSON.parse(data);
+          console.log(code,card,msg,"读取卡信息");
+          if (code===1){
+            mythis.formUp.icCard=card;
+          }else {
+            mythis.$message.error(msg)
+          }
+        }).catch((err) => {
+          mythis.loadingBD=false;
+          console.log("请求失败:"+err)
+        });
+
       }
     }
   }
