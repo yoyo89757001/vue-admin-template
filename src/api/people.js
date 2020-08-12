@@ -24,6 +24,21 @@ export function getPeopleInfo(id) {
   })
 }
 
+export function getConfig() {
+  return request({
+    url: '/app/getConfig',
+    method: 'get',
+  })
+}
+
+export function getPeopleInfoFind(data) {
+  return request({
+    url: '/app/person/finds',
+    method: 'post',
+    data
+  })
+}
+
 export function openCard() {
   return request({
     url: '/app/icCard/openCard',
@@ -37,4 +52,5 @@ export function getDeviceKey(params) {
     method: 'get',
     params
   })
+
 }

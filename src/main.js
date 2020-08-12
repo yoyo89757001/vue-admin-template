@@ -12,6 +12,8 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+import 'lib-flexible'
+
 //1.安装echarts依赖   npm install echarts --save
 //2.在main.js中全局中引用
 import echarts from 'echarts'

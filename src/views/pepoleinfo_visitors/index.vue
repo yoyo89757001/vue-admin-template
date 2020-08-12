@@ -1,15 +1,14 @@
 <template>
-  <div style="display: flex;justify-content: center;margin-top: 40px">
-    <el-card style="width: 80%;height: 900px;margin-bottom: 30px">
+  <div style="display: flex;justify-content: center;margin-top: 2vw">
+    <el-card style="width: 80vw;margin-bottom: 2vw">
       <el-row >
         <!--     1大块 el-row 用来分左右两大块 el-col每个子小块-->
         <el-col :span="12" :offset="6">
           <!--         el-container 用来分上下块，也可以用来分左右块  里面有el-header就是上下块-->
-          <el-container style="width: 100%;height: 83vh" class="avatar-uploader">
+          <el-container style="height: 50vw">
             <el-header>
-
-              <div style="display: flex;justify-content: center;align-items: center;margin-top: 20%">
-                <div style="text-align: center;position: absolute;z-index: 2">
+              <div style="margin-top: 3vw;width: 32vw;display: flex;justify-content: center;">
+                <div style="text-align: center;z-index: 2">
                   <el-upload
                     class="avatar-uploader"
                     action=""
@@ -28,7 +27,7 @@
               </div>
 
 
-              <el-form ref="formUp" :model="formUp" label-width="80px" :rules="rules" style="position: absolute;margin-top: 10%" v-loading="loading">
+              <el-form ref="formUp" :model="formUp" label-width="4vw" :rules="rules" style="position: absolute;margin-top: 1vw">
                 <el-form-item label="姓名:" prop="name">
                   <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
                 </el-form-item>
@@ -54,7 +53,7 @@
                 <el-form-item label="IC卡号:">
                   <el-row >
                     <el-col :span="18">
-                      <el-input v-model="formUp.icCard" placeholder="点击绑定按钮后,再到机器刷卡" readonly="readonly"></el-input>
+                      <el-input v-model="formUp.icCard" placeholder="点击绑定按钮后,再到机器刷卡" ></el-input>
                     </el-col>
                     <el-col :span="6">
                       <el-button type="primary" :loading="loadingBD" style="width: 100px;height: 40px;text-align: center;margin-left: 24px" @click="onBind">绑定</el-button>
@@ -66,7 +65,7 @@
                   <el-input v-model="formUp.phone" placeholder="请填写手机号码" oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"></el-input>
                 </el-form-item>
 
-                <el-form-item label="过期时间:" required label-width="15%">
+                <el-form-item label="过期时间:" required label-width="4.4vw">
                   <el-row >
                     <el-col :span="11">
                       <el-date-picker type="datetime" placeholder="开始日期" v-model="formUp.startTime" style="width: 100%"></el-date-picker>
@@ -100,8 +99,8 @@
 
 <script>
   import  ax from 'axios'
-  import {getPeopleInfo} from '@/api/people'
-  import Moment from "moment";
+  import {getPeopleInfo,openCard} from '@/api/people'
+  //import Moment from "moment";
 
 
   export default {
@@ -109,12 +108,24 @@
 
     },
     mounted() {
-      console.log(this.myId,"访客传过来的ID");
-      if (this.myId==null){
-        console.log('是新增人员')
+      console.log(this.myId,"员工传过来的ID");
+      if (this.myId!==undefined){
+        var mythis=this;
+        getPeopleInfo(this.myId).then(response => {
+          mythis.loading=false;
+          console.log("个人信息返回",response);
+          const  {data} =response;
+          mythis.formUp =JSON.parse(data);
+          mythis.imageUrl=mythis.formUp.photo;
+          console.log(mythis.formUp,"人员信息");
 
-      }else {//网络请求个人信息
+        }).catch((err) => {
+          mythis.loadingBD=false;
+          console.log("请求失败:"+err)
+        });
 
+      }else {
+        this.$message.error('获取人员信息失败')
       }
 
     },
@@ -131,7 +142,7 @@
         imageUrl:'',
         myHeaders: {'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST','Access-Control-Allow-Headers':'x-requested-with,content-type'},
         widthP:100,
-        loading:false,
+        loading:true,
         loadingBD:false,
         file:'',
         formUp: {
@@ -139,12 +150,13 @@
           department: '',
           sex:'',
           birthday: '',
-          peopleType:1,
+          peopleType:2,
           startTime: '',
           endTime:'',
           remarks: '',
           phone:'',
           icCard:'',
+          sid:'',
         },
         rules: {
           name: [
@@ -183,11 +195,8 @@
           // console.log(this.formUp.startTime);
           // console.log( Date.parse(this.formUp.startTime));//转成时间戳
           // console.log( Date.parse(new Date()));//转成时间戳
-          if (this.file===''){
-            this.$message.error("请选择上传底库");
-            return
-          }
-          if (!this.pepoleTypeDisabled){
+
+          if (this.formUp.peopleType===2){
             if (this.formUp.startTime==='' || this.formUp.endTime===''){
               this.$message.error("过期时间不能为空");
               return
@@ -206,8 +215,9 @@
 
             let fd = new FormData();//转成FormData格式上传
 
-            console.log('生日', Date.parse(this.formUp.birthday));
+            //console.log('生日', Date.parse(this.formUp.birthday));
             fd.append('file', this.file);
+            fd.append('sid',this.formUp.sid);
             fd.append('name',this.formUp.name);
             fd.append('department', this.formUp.department);
             fd.append('sex', this.formUp.sex);
@@ -222,7 +232,7 @@
             var mthis=this;
             ax({
               method: 'post',
-              url: '/app/person/create2',
+              url: '/app/person/updata2',
               timeout:30000,
               data:fd,
             }).then(function(res) {
@@ -231,7 +241,7 @@
               if (errorCode===200){
                 const {code,msg} = JSON.parse(data);
                 if (code===1){
-                  mthis.$message.success('添加成功');
+                  mthis.$message.success('修改成功');
                   if (mthis.formUp.peopleType===1){
                     mthis.$router.push('/table')
                   }else {
@@ -302,14 +312,14 @@
   .avatar-uploader-icon {
     font-size: 22px;
     color: #8c939d;
-    width: 128px;
-    height: 128px;
-    line-height: 128px;
+    width: 8.4vw;
+    height: 8.4vw;
+    line-height: 8.4vw;
     text-align: center;
   }
   .avatar {
-    width: 178px;
-    height: 178px;
+    width: 8.4vw;
+    height: 8.4vw;
     display: block;
   }
 

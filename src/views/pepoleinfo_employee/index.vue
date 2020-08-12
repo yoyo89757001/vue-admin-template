@@ -1,15 +1,14 @@
 <template>
-  <div style="display: flex;justify-content: center;margin-top: 40px">
-    <el-card style="width: 80%;height: 900px;margin-bottom: 30px" v-loading="loading">
+  <div style="display: flex;justify-content: center;margin-top: 2vw">
+    <el-card style="width: 80vw;margin-bottom: 2vw">
       <el-row >
         <!--     1大块 el-row 用来分左右两大块 el-col每个子小块-->
         <el-col :span="12" :offset="6">
           <!--         el-container 用来分上下块，也可以用来分左右块  里面有el-header就是上下块-->
-          <el-container style="width: 100%;height: 83vh" class="avatar-uploader">
+          <el-container style="height: 50vw">
             <el-header>
-
-              <div style="display: flex;justify-content: center;align-items: center;margin-top: 20%">
-                <div style="text-align: center;position: absolute;z-index: 2">
+              <div style="margin-top: 3vw;width: 32vw;display: flex;justify-content: center;">
+                <div style="text-align: center;z-index: 2">
                   <el-upload
                     class="avatar-uploader"
                     action=""
@@ -27,8 +26,7 @@
                 <!--              </div>-->
               </div>
 
-
-              <el-form ref="formUp" :model="formUp" label-width="80px" :rules="rules" style="position: absolute;margin-top: 10%">
+              <el-form ref="formUp" :model="formUp" label-width="4vw" :rules="rules" style="position: absolute;margin-top: 1vw">
                 <el-form-item label="姓名:" prop="name">
                   <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
                 </el-form-item>
@@ -54,7 +52,7 @@
                 <el-form-item label="IC卡号:">
                   <el-row >
                     <el-col :span="18">
-                      <el-input v-model="formUp.icCard" placeholder="点击绑定按钮后,再到机器刷卡" readonly="readonly"></el-input>
+                      <el-input v-model="formUp.icCard" placeholder="点击绑定按钮后,再到机器刷卡" ></el-input>
                     </el-col>
                     <el-col :span="6">
                       <el-button type="primary" :loading="loadingBD" style="width: 100px;height: 40px;text-align: center;margin-left: 24px" @click="onBind">绑定</el-button>
@@ -89,8 +87,8 @@
 
 <script>
   import  ax from 'axios'
-  import {getPeopleInfo} from '@/api/people'
-  import Moment from "moment";
+  import {getPeopleInfo,openCard} from '@/api/people'
+  //import Moment from "moment";
 
 
   export default {
@@ -208,7 +206,7 @@
 
             console.log('生日', Date.parse(this.formUp.birthday));
             fd.append('file', this.file);
-            fd.append('id',this.formUp.sid);
+            fd.append('sid',this.formUp.sid);
             fd.append('name',this.formUp.name);
             fd.append('department', this.formUp.department);
             fd.append('sex', this.formUp.sex);
@@ -232,7 +230,7 @@
               if (errorCode===200){
                 const {code,msg} = JSON.parse(data);
                 if (code===1){
-                  mthis.$message.success('添加成功');
+                  mthis.$message.success('修改成功');
                   if (mthis.formUp.peopleType===1){
                     mthis.$router.push('/table')
                   }else {
@@ -303,14 +301,14 @@
   .avatar-uploader-icon {
     font-size: 22px;
     color: #8c939d;
-    width: 128px;
-    height: 128px;
-    line-height: 128px;
+    width: 8.4vw;
+    height: 8.4vw;
+    line-height: 8.4vw;
     text-align: center;
   }
   .avatar {
-    width: 178px;
-    height: 178px;
+    width: 8.4vw;
+    height: 8.4vw;
     display: block;
   }
 

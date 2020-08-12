@@ -1,9 +1,8 @@
 <template>
   <div>
-    <el-row>
-      <el-col>
-        <div class="warpe">
-          <el-col :span="2">
+    <el-row class="warpe">
+
+          <el-col :span="16">
             <el-popover
               placement="top"
               width="180"
@@ -17,23 +16,23 @@
             </el-popover>
 
           </el-col>
-          <el-col :span="18" style="display: flex;text-align: right;justify-items: right;justify-content: right">
+          <el-col :span="4" style="text-align: right;justify-items: right;justify-content: right">
             <el-input
-              style="width: 150px;margin: 20px;align-items: center"
+              style="width: 7vw;margin: 1vw;align-items: center"
               fixed="right"
               placeholder="请输入姓名"
               v-model="input"
               clearable>
             </el-input>
           </el-col>
-          <el-col :span="2" style="margin-left: 10px;margin-right: 10px" >
-            <el-button type="primary" >搜索</el-button>
+          <el-col :span="2" style="margin-left: 10px" >
+            <el-button type="primary" @click="finds">搜索员工</el-button>
           </el-col>
           <el-col :span="2">
             <el-button type="warning" style="margin-left: 10px" @click="handleClickAddPepole">新增人员</el-button>
           </el-col>
-        </div>
-      </el-col>
+
+
     </el-row>
 
   <el-table
@@ -135,7 +134,7 @@
 
 <script>
 
-  import {getPeople,deletePeople} from '@/api/people'
+  import {getPeople,deletePeople,getPeopleInfoFind} from '@/api/people'
   import Moment from 'moment' //需要安装  npm install moment --save
 
   export default {
@@ -170,7 +169,7 @@
         }
         const mythis=this;
         requestData.forEach(function (x, index) {//遍历插入
-          if (x.birthday!==undefined){//没有时间
+          if (x.birthday!==undefined && x.birthday!==0){//没有时间
             console.log(x.birthday,'x.birthday');
             //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
             console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
@@ -227,7 +226,7 @@
             });
           }
         }else {//编辑,带上id
-          this.$router.replace('/pepoleinfo_employee?id='+this.tableDataTemp[row].id)
+          this.$router.replace('/pepoleinfo_employee?id='+this.tableDataTemp[row].sid)
           // myId:this.$route.query.id,//拿到上个界面传过来的参数
         }
       },
@@ -299,6 +298,39 @@
       },
       handleClickAddPepole(){//新增人员
         this.$router.replace('/pepoleinfo')
+      },
+      finds(){//搜索
+        if (this.input.trim()===''){
+          return;
+        }
+        var mythis=this;
+        getPeopleInfoFind({name:this.input,type:1}).then(response => {
+          const  {data} =response;
+          console.log("搜索人员返回",data);
+          var de=JSON.parse(data);
+          if (de!==undefined && de.length>0){
+            mythis.tableDataTemp=[];//先清掉数据
+            mythis.totalNum=de.length;
+            de.forEach(function (x, index) {//遍历插入
+              if (x.birthday !== undefined && x.birthday !== 0) {//没有时间
+                //console.log(x.birthday,'x.birthday');
+                //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
+                //console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
+                x.birthday = Moment(Number(x.birthday)).format('YYYY年MM月DD日');
+                x.startTime = Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
+                x.endTime = Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
+                mythis.tableDataTemp.push(x);
+              } else {
+                x.birthday = '';
+                mythis.tableDataTemp.push(x);
+              }
+            });
+          }else {
+            mythis.$message.error('未搜索到人员')
+          }
+        }).catch((err) => {
+          console.log("请求失败:"+err)
+        });
       }
     }
   }
@@ -308,6 +340,7 @@
   .warpe{
     height: 80px;
     display: flex;
+    position: relative;
     align-items: center;
     padding-left: 20px;
 
