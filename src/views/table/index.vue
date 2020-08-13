@@ -159,20 +159,20 @@
     },
     mounted() {
       //界面绘制已完成
+      const mythis=this;
       getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
        // console.log("获取人员列表",response);
         const  {data,errorCode} =response;
         const  {requestData,total} =JSON.parse(data);
-        this.totalNum=total;
+        mythis.totalNum=total;
         if (requestData.length>0){
-          this.singlepage=false;//数量大于1时 显示分页
+          mythis.singlepage=false;//数量大于1时 显示分页
         }
-        const mythis=this;
         requestData.forEach(function (x, index) {//遍历插入
           if (x.birthday!==undefined && x.birthday!==0){//没有时间
-            console.log(x.birthday,'x.birthday');
+           // console.log(x.birthday,'x.birthday');
             //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
-            console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
+           // console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
             x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
             mythis.tableDataTemp.push(x);
           }else {
@@ -238,12 +238,12 @@
        // console.log(`当前页回调方法: ${val}`);
         this.currentPage = val;    //当前页的值，动态改变
         this.tableDataTemp=[];//先清掉数据
+        const mythis=this;
         getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
           //console.log("获取人员列表",response);
           const  {data,errorCode} =response;
           const  {requestData,total} =JSON.parse(data);
-          this.totalNum=total;
-          const mythis=this;
+          mythis.totalNum=total;
           requestData.forEach(function (x, index) {//遍历插入
             if (x.birthday!==undefined){//没有时间
              // console.log(x.birthday,'x.birthday');

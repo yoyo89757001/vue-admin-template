@@ -78,6 +78,27 @@ export const constantRoutes = [
   },
 
   {
+    path: '/history',
+    component: Layout,
+    //  redirect: '/example/table',
+    name: '历史记录',
+    meta: { title: '历史记录', icon: 'form' },
+    children: [
+      {
+        path: '/subject',
+        name: '刷脸记录',
+        component: () => import('@/views/history/index_people'),
+        meta: { title: '刷脸记录', icon: 'user' }
+      },
+      {
+        path: '/card',
+        name: '刷卡记录',
+        component: () => import('@/views/history/index_card'),
+        meta: { title: '刷卡记录', icon: 'eye-open' }
+      }
+    ]
+  },
+  {
     path: '/form',
     component: Layout,
     children: [
@@ -85,7 +106,7 @@ export const constantRoutes = [
         path: '/form',
         name: '设备配置',
         component: () => import('@/views/form/index'),
-        meta: { title: '设备配置', icon: 'form' }
+        meta: { title: '设备配置', icon: 'shezhi' }
       }
     ]
   },

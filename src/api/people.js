@@ -8,6 +8,15 @@ export function getPeople(data) {
   })
 }
 
+
+export function getHistroy(data) {
+  return request({
+    url: 'app/findRecords',
+    method: 'post',
+    data
+  })
+}
+
 export function deletePeople(id) {
   return request({
     url: '/app/person/deleteone',

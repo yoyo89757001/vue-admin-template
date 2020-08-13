@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex;justify-content: center;margin-top: 40px;margin-bottom: 40px">
-    <el-card style="width: 82vw;height: 80vw;" v-loading.fullscreen.lock="loading">
+    <el-card style="width: 82vw;height: 42vw;" v-loading.fullscreen.lock="loading">
       <el-row style="margin-top: 1vw">
         <el-col :span="11">
           <el-form ref="form" :model="form" style="margin-left: 30px">
@@ -214,12 +214,12 @@
             <!--  ------------------------------------------------------->
             <el-form-item label="选择机型:" style="display: flex;justify-items: center;margin-top: 1vw">
               <div>
-                <el-select v-model="value" placeholder="请选择">
+                <el-select v-model="form.dangqianChengShi2" placeholder="请选择" @change="jiqileixng">
                   <el-option
                     v-for="item in options"
-                    :key="item.value"
+                    :key="item.dangqianChengShi2"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.label">
                   </el-option>
                 </el-select>
               </div>
@@ -267,16 +267,17 @@ export default {
         cameraPreviewRotation2:0,//红外预览方向
         faceRotation2:0,//红外算法方向
         msrBitmapRotation:0,//陌生人抓拍方向
+        dangqianChengShi2:'ZL001',//当前机型 0，亮钻，1，智连，2涂鸦
       },
       formLabelWidth: '40vw',
       options: [{
-        value: '0',
+        dangqianChengShi2: '0',
         label: 'ZL001' //智连
       }, {
-        value: '1',
+        dangqianChengShi2: '1',
         label: 'LZ001' //亮钻
       }, {
-        value: '2',
+        dangqianChengShi2: '2',
         label: 'TY001'
       }],
       value: ''
@@ -387,7 +388,13 @@ export default {
         console.log("finally调用");
         mthis.loading=false;
       });
-
+    },
+    jiqileixng(vue){
+      console.log(vue);
+      this.form.dangqianChengShi2=vue;
+      let fd = new FormData();//转成FormData格式上传
+      fd.append('dangqianChengShi2', this.form.dangqianChengShi2);//
+      this.submit(fd);
     }
 
   }
