@@ -30,6 +30,7 @@
     </el-row>
 
   <el-table
+    v-loading="loding"
     ref="multipleTable"
     :data="tableDataTemp"
     max-height="734px"
@@ -42,7 +43,6 @@
 <!--    header-align="center" 只表头居中 align="center"：表头和内容都居中-->
 
     <el-table-column
-      v-loding="loding"
       prop="name"
       label="姓名"
       align="center"
@@ -192,18 +192,13 @@
           this.loding=false;
         });
       },
-
       finds(){//搜索
         if (this.input.trim()==='' && (this.startTime===''|| this.endTime==='')){
           this.$message.error('请输入姓名或者开始时间和结束时间');
           return;
         }
-        if (Date.parse(this.formUp.endTime)<=Date.parse(this.formUp.startTime)){
+        if (Date.parse(this.endTime)<=Date.parse(this.startTime)){
           this.$message.error("开始时间不能大于等于结束时间");
-          return
-        }
-        if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
-          this.$message.error("开始时间不能小于当前时间");
           return
         }
         var mythis=this;

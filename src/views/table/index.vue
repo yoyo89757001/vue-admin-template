@@ -36,6 +36,7 @@
     </el-row>
 
   <el-table
+    v-loading="loding"
     ref="multipleTable"
     :data="tableDataTemp"
     max-height="734px"
@@ -140,6 +141,7 @@
   export default {
     data() {
       return {
+        loding:false,
         singlepage:true,//只有一页时 隐藏分页
         headUrl:'',
         tableData: [],
@@ -160,7 +162,9 @@
     mounted() {
       //界面绘制已完成
       const mythis=this;
+      this.loding=true;
       getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
+        mythis.loding=false;
        // console.log("获取人员列表",response);
         const  {data,errorCode} =response;
         const  {requestData,total} =JSON.parse(data);
@@ -179,8 +183,12 @@
             x.birthday='';
             mythis.tableDataTemp.push(x);
           }
+          if (x.icCard===undefined || x.icCard===''){
+            x.icCard='未绑定';
+          }
         });
       }).catch((err) => {
+        mythis.loding=false;
         console.log("请求失败:"+err)
       });
 
@@ -202,7 +210,9 @@
         if (type===2 || type===3){//2删除 3取消
           this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
           if (type===2){//删除数据
+            this.loding=true;
             deletePeople(this.tableDataTemp[row].id).then(response => {
+              mythis.loding=false;
               console.log("删除人员返回",response);
               const  {data} =response;
               const  {code,msg} =JSON.parse(data);
@@ -222,6 +232,7 @@
                 mythis.$message.error(msg)
               }
             }).catch((err) => {
+              mythis.loding=false;
               console.log("请求失败:"+err)
             });
           }
@@ -239,7 +250,9 @@
         this.currentPage = val;    //当前页的值，动态改变
         this.tableDataTemp=[];//先清掉数据
         const mythis=this;
+        this.loding=true;
         getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
+          mythis.loding=false;
           //console.log("获取人员列表",response);
           const  {data,errorCode} =response;
           const  {requestData,total} =JSON.parse(data);
@@ -255,8 +268,12 @@
               x.birthday='';
               mythis.tableDataTemp.push(x);
             }
+            if (x.icCard===undefined || x.icCard===''){
+              x.icCard='未绑定';
+            }
           });
         }).catch((err) => {
+          mythis.loding=false;
           console.log("请求失败:"+err)
         });
       },
@@ -275,7 +292,9 @@
                 ids=ids+',';
               }
             });
+            this.loding=true;
             deletePeople(ids).then(response => {
+              mythis.loding=false;
              // console.log("删除人员返回",response);
               const  {data} =response;
               const  {code,msg} =JSON.parse(data);
@@ -291,6 +310,7 @@
                 mythis.$message.error(msg)
               }
             }).catch((err) => {
+              mythis.loding=false;
               console.log("请求失败:"+err)
             });
           }
@@ -304,7 +324,9 @@
           return;
         }
         var mythis=this;
+        this.loding=true;
         getPeopleInfoFind({name:this.input,type:1}).then(response => {
+          mythis.loding=false;
           const  {data} =response;
           console.log("搜索人员返回",data);
           var de=JSON.parse(data);
@@ -324,11 +346,15 @@
                 x.birthday = '';
                 mythis.tableDataTemp.push(x);
               }
+              if (x.icCard===undefined || x.icCard===''){
+                x.icCard='未绑定';
+              }
             });
           }else {
             mythis.$message.error('未搜索到人员')
           }
         }).catch((err) => {
+          mythis.loding=false;
           console.log("请求失败:"+err)
         });
       }

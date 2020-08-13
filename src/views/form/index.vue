@@ -285,13 +285,16 @@ export default {
   },
   mounted() {
     var mythis=this;
+    this.loading=true;
     getConfig().then(response => {
+      mythis.loading=false;
       console.log("设置信息返回",response);
       const  {data} =response;
       mythis.form =JSON.parse(data);
       console.log(mythis.form,"设置信息");
     }).catch((err) => {
-      mythis.$message.error(err)
+      mythis.loading=false;
+      mythis.$message.error(err);
       console.log("请求设置失败:"+err)
     });
   },

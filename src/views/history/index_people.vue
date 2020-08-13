@@ -30,7 +30,7 @@
     </el-row>
 
   <el-table
-    v-loding="loding"
+    v-loading="loding"
     ref="multipleTable"
     :data="tableDataTemp"
     max-height="734px"
@@ -203,12 +203,8 @@
           this.$message.error('请输入姓名或者开始时间和结束时间');
           return;
         }
-        if (Date.parse(this.formUp.endTime)<=Date.parse(this.formUp.startTime)){
+        if (Date.parse(this.endTime)<=Date.parse(this.startTime)){
           this.$message.error("开始时间不能大于等于结束时间");
-          return
-        }
-        if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
-          this.$message.error("开始时间不能小于当前时间");
           return
         }
         var mythis=this;

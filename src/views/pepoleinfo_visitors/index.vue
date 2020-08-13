@@ -205,10 +205,10 @@
                 this.$message.error("开始时间不能大于等于结束时间");
                 return
               }
-              if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
-                this.$message.error("开始时间不能小于当前时间");
-                return
-              }
+              // if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
+              //   this.$message.error("开始时间不能小于当前时间");
+              //   return
+              // }
             }
           }
           if (valid) {
