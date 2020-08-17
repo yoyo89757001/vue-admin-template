@@ -31,8 +31,17 @@
                   <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
                 </el-form-item>
 
-                <el-form-item label="部门:">
-                  <el-input v-model="formUp.department" placeholder="请填写部门"></el-input>
+                <el-form-item label="部门:"  required>
+                  <div>
+                    <el-select v-model="formUp.department" placeholder="请选择" @change="jiqileixng" style="width: 100%">
+                      <el-option
+                        v-for="item in departmentList"
+                        :key="item.sid"
+                        :label="item.name"
+                        :value="item.name">
+                      </el-option>
+                    </el-select>
+                  </div>
                 </el-form-item>
 
                 <el-form-item label="性别:" prop="sex">
@@ -96,9 +105,22 @@
 
     },
     mounted() {
-      console.log(this.myId,"员工传过来的ID");
+      const mythis=this;
+      getDepartment({page:0,size:100}).then(response => {
+        // console.log("获取人员列表",response);
+        const  {data,errorCode} =response;
+        const  {requestData,total} =JSON.parse(data);
+        if (requestData.length<=0){
+          mythis.$message.error('请先创建部门');
+        }
+        requestData.forEach(function (x, index) {//遍历插入
+          console.log(x,'x');
+          mythis.departmentList.push(x);
+        });
+      }).catch((err) => {
+        console.log("请求失败:"+err)
+      });
       if (this.myId!==undefined){
-        var mythis=this;
         getPeopleInfo(this.myId).then(response => {
           mythis.loading=false;
           console.log("个人信息返回",response);
@@ -133,6 +155,7 @@
         widthP:100,
         loading:true,
         loadingBD:false,
+        departmentList: [],
         file:'',
         formUp: {
           name: '',
@@ -280,7 +303,10 @@
           mythis.loadingBD=false;
           console.log("请求失败:"+err)
         });
-
+      },
+      jiqileixng(vue){
+        console.log(vue,'选中的部门值');
+        this.formUp.department=vue;
       }
     }
   }

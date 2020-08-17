@@ -32,9 +32,19 @@
                 <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
               </el-form-item>
 
-              <el-form-item label="部门:">
-                <el-input v-model="formUp.department" placeholder="请填写部门"></el-input>
+              <el-form-item label="部门:"  required :hidden="pepoleTypeDisabled!==true">
+                <div>
+                  <el-select v-model="formUp.department" placeholder="请选择" @change="jiqileixng" style="width: 100%">
+                    <el-option
+                      v-for="item in departmentList"
+                      :key="item.sid"
+                      :label="item.name"
+                      :value="item.name">
+                    </el-option>
+                  </el-select>
+                </div>
               </el-form-item>
+
 
               <el-form-item label="性别:" prop="sex">
                 <el-col :span="9">
@@ -106,8 +116,8 @@
 
 <script>
   import  ax from 'axios'
-  import {openCard} from '@/api/people'
-  import Moment from "moment";
+  import {openCard,getDepartment} from '@/api/people'
+  //import Moment from "moment";
 
 
   export default {
@@ -115,23 +125,25 @@
 
     },
     mounted() {
-      console.log(this.myId+"myId");
-      if (this.myId==null){
-        console.log('是新增人员')
-
-      }else {//网络请求个人信息
-
-      }
-
+      const mythis=this;
+      getDepartment({page:0,size:100}).then(response => {
+        // console.log("获取人员列表",response);
+        const  {data,errorCode} =response;
+        const  {requestData,total} =JSON.parse(data);
+        if (requestData.length<=0){
+          mythis.$message.error('请先创建部门');
+        }
+        requestData.forEach(function (x, index) {//遍历插入
+          console.log(x,'x');
+          mythis.departmentList.push(x);
+        });
+      }).catch((err) => {
+        console.log("请求失败:"+err)
+      });
+      console.log('mounted');
     },
     data() {
-      const validateUsername = (rule, value, callback) => {
-        if (!validUsername(value)) {
-          callback(new Error('请检查你的用户名'))
-        } else {
-          callback()
-        }
-      };
+      console.log('data');
       return {
         pepoleTypeDisabled:true,
         myId:this.$route.query.id,//拿到上个界面传过来的参数
@@ -141,6 +153,7 @@
         loading:false,
         loadingBD:false,
         file:'',
+        departmentList: [],
         formUp: {
           name: '',
           department: '',
@@ -207,14 +220,18 @@
                 this.$message.error("开始时间不能大于等于结束时间");
                 return
               }
-              if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
-                this.$message.error("开始时间不能小于当前时间");
-                return
-              }
+              // if (Date.parse(this.formUp.startTime)<=Date.parse(new Date)){
+              //   this.$message.error("开始时间不能小于当前时间");
+              //   return
+              // }
             }
            }
           if (valid) {
             let fd = new FormData();//转成FormData格式上传
+            if (this.pepoleTypeDisabled && this.formUp.department===''){
+              this.$message.error("请选择部门");
+              return ;
+            }
            // console.log('生日', Date.parse(this.formUp.birthday));
             fd.append('file', this.file);
             fd.append('name',this.formUp.name);
@@ -290,7 +307,10 @@
           mythis.loadingBD=false;
           console.log("请求失败:"+err)
         });
-
+      },
+      jiqileixng(vue){
+        console.log(vue,'选中的部门值');
+        this.formUp.department=vue;
       }
     }
   }

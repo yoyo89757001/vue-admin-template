@@ -143,11 +143,18 @@
           }
           if (x.peopleType===1){
             x.peopleType='员工';
+            if (x.icCard===undefined || x.icCard===''){
+              x.icCard='未绑定';
+            }
           }else if (x.peopleType===2){
             x.peopleType='访客';
+            if (x.icCard===undefined || x.icCard===''){
+              x.icCard='未绑定';
+            }
           }else {
             x.peopleType='陌生人';
           }
+
           mythis.tableDataTemp.push(x);
         });
       }).catch((err) => {
@@ -183,12 +190,19 @@
               x.time='';
             }
             if (x.peopleType===1){
+              if (x.icCard===undefined || x.icCard===''){
+                x.icCard='未绑定';
+              }
               x.peopleType='员工';
             }else if (x.peopleType===2){
+              if (x.icCard===undefined || x.icCard===''){
+                x.icCard='未绑定';
+              }
               x.peopleType='访客';
             }else {
               x.peopleType='陌生人';
             }
+
             mythis.tableDataTemp.push(x);
           });
         }).catch((err) => {
@@ -227,11 +241,18 @@
             }
             if (x.peopleType===1){
               x.peopleType='员工';
+              if (x.icCard===undefined || x.icCard===''){
+                x.icCard='未绑定';
+              }
             }else if (x.peopleType===2){
               x.peopleType='访客';
+              if (x.icCard===undefined || x.icCard===''){
+                x.icCard='未绑定';
+              }
             }else {
               x.peopleType='陌生人';
             }
+
             mythis.tableDataTemp.push(x);
           });
         }).catch((err) => {

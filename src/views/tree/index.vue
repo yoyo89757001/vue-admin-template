@@ -191,14 +191,13 @@
             x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
             x.startTime=Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
             x.endTime=Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
-            mythis.tableDataTemp.push(x);
           }else {
             x.birthday='';
-            mythis.tableDataTemp.push(x);
           }
           if (x.icCard===undefined || x.icCard===''){
             x.icCard='未绑定';
           }
+          mythis.tableDataTemp.push(x);
         });
       }).catch((err) => {
         mythis.loding=false;
@@ -278,14 +277,13 @@
               x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
               x.startTime=Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
               x.endTime=Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
-              mythis.tableDataTemp.push(x);
             }else {
               x.birthday='';
-              mythis.tableDataTemp.push(x);
             }
             if (x.icCard===undefined || x.icCard===''){
               x.icCard='未绑定';
             }
+            mythis.tableDataTemp.push(x);
           });
         }).catch((err) => {
           mythis.loding=false;
@@ -356,14 +354,13 @@
                 x.birthday = Moment(Number(x.birthday)).format('YYYY年MM月DD日');
                 x.startTime = Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
                 x.endTime = Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
-                mythis.tableDataTemp.push(x);
               } else {
                 x.birthday = '';
-                mythis.tableDataTemp.push(x);
               }
               if (x.icCard===undefined || x.icCard===''){
                 x.icCard='未绑定';
               }
+              mythis.tableDataTemp.push(x);
             });
           }else {
             mythis.$message.error('未搜索到人员')

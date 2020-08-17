@@ -8,6 +8,13 @@ export function getPeople(data) {
   })
 }
 
+export function getDepartment(data) {
+  return request({
+    url: 'app/department/findByPage',
+    method: 'post',
+    data
+  })
+}
 
 export function getHistroy(data) {
   return request({
@@ -20,6 +27,14 @@ export function getHistroy(data) {
 export function deletePeople(id) {
   return request({
     url: '/app/person/deleteone',
+    method: 'get',
+    params:{id}
+  })
+}
+
+export function deleteDepartment(id) {
+  return request({
+    url: '/app/person/deleteDepartment',
     method: 'get',
     params:{id}
   })

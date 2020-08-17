@@ -2,7 +2,7 @@
   <div>
     <el-row class="warpe">
 
-          <el-col :span="16">
+          <el-col :span="22">
             <el-popover
               placement="top"
               width="180"
@@ -16,20 +16,18 @@
             </el-popover>
 
           </el-col>
-          <el-col :span="4" style="text-align: right;justify-items: right;justify-content: right">
-            <el-input
-              style="width: 7vw;margin: 1vw;align-items: center"
-              fixed="right"
-              placeholder="请输入姓名"
-              v-model="input"
-              clearable>
-            </el-input>
-          </el-col>
-          <el-col :span="2" style="margin-left: 10px" >
-            <el-button type="primary" @click="finds">搜索员工</el-button>
-          </el-col>
+
           <el-col :span="2">
-            <el-button type="warning" style="margin-left: 10px" @click="handleClickAddPepole">新增人员</el-button>
+            <el-button type="primary" style="margin-left: 10px" @click="isCompanyName=true">新增部门</el-button>
+            <!--   弹窗-->
+            <el-dialog title="新增部门" :visible.sync="isCompanyName" center :width="formLabelWidth" :modal="loding">
+              <span >部门名称</span>
+              <el-input v-model="deparementName" autocomplete="off" type="text" maxlength="18" style="margin-top: 8px"></el-input>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="isCompanyName = false" style="margin-right: 20px">取 消</el-button>
+                <el-button type="primary" @click="dialog_companyName">确 定</el-button>
+              </div>
+            </el-dialog>
           </el-col>
 
 
@@ -54,57 +52,35 @@
 <!--    header-align="center" 只表头居中 align="center"：表头和内容都居中-->
     <el-table-column
       prop="name"
+      label="部门名称"
       align="center"
-      label="底库照片"
-      width="80">
-      <el-image :src="scope.row.photo" style="height: 50px" slot-scope="scope" :preview-src-list="[scope.row.photo]"></el-image>
+      width="140">
     </el-table-column>
     <el-table-column
-      prop="name"
-      label="姓名"
-      align="center"
-      width="120">
+      label="部门人数"
+      prop="num">
     </el-table-column>
-    <el-table-column
-      label="部门"
-      prop="department"
-      align="center"
-      width="150">
-    </el-table-column>
-    <el-table-column
-      label="性别"
-      align="center"
-      width="120"
-      show-overflow-tooltip>
-      <span slot-scope="scope" v-if="scope.row.sex==='1'">男</span>
-      <span slot-scope="scope" v-else>女</span>
-    </el-table-column>
-    <el-table-column
-      prop="icCard"
-      label="IC卡号"
-      align="center"
-      width="136"
-      show-overflow-tooltip>
-    </el-table-column>
-    <el-table-column
-      prop="birthday"
-      label="出生日期"
-      align="center"
-      width="136"
-      show-overflow-tooltip>
-    </el-table-column>
-    <el-table-column
-      prop="phone"
-      label="手机号码"
-      show-overflow-tooltip>
-    </el-table-column>
+
     <el-table-column
       align="center"
       fixed="right"
       label="操作"
       width="170">
+
+
+
       <template slot-scope="scope">
         <el-button @click="handleClick(scope.$index,1)" type="primary" size="small">编辑</el-button>
+        <!--   弹窗-->
+        <el-dialog title="修改部门名称" :visible.sync="isCompanyName2" center :width="formLabelWidth" :modal='loding'>
+          <span >部门名称</span>
+          <el-input v-model="deparementName" autocomplete="off" type="text" maxlength="18" style="margin-top: 8px"></el-input>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="isCompanyName2=false" style="margin-right: 20px">取 消</el-button>
+            <el-button type="primary" @click="dialog_companyName2">确 定</el-button>
+          </div>
+        </el-dialog>
+
         <el-popover
           placement="top"
           width="152"
@@ -135,13 +111,19 @@
 
 <script>
 
-  import {getPeople,deletePeople,getPeopleInfoFind} from '@/api/people'
-  import Moment from 'moment' //需要安装  npm install moment --save
+  import {getDepartment,deleteDepartment} from '@/api/people'
+  import Moment from 'moment'
+  import ax from "axios"; //需要安装  npm install moment --save
 
   export default {
     data() {
       return {
+        sid:'',
+        formLabelWidth: '40vw',
+        isCompanyName:false,//控制修改公司名称的弹窗显示
+        isCompanyName2:false,//控制修改公司名称的弹窗显示
         loding:false,
+        deparementName:'',
         singlepage:true,//只有一页时 隐藏分页
         headUrl:'',
         tableData: [],
@@ -163,7 +145,7 @@
       //界面绘制已完成
       const mythis=this;
       this.loding=true;
-      getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
+      getDepartment({page:this.currentPage-1,size:this.pageSize}).then(response => {
         mythis.loding=false;
        // console.log("获取人员列表",response);
         const  {data,errorCode} =response;
@@ -173,24 +155,13 @@
           mythis.singlepage=false;//数量大于1时 显示分页
         }
         requestData.forEach(function (x, index) {//遍历插入
-          if (x.birthday!==undefined && x.birthday!==0){//没有时间
-           // console.log(x.birthday,'x.birthday');
-            //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
-           // console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
-            x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-          }else {
-            x.birthday='';
-          }
-          if (x.icCard===undefined || x.icCard===''){
-            x.icCard='未绑定';
-          }
-          mythis.tableDataTemp.push(x);
+         mythis.tableDataTemp.push(x);
+
         });
       }).catch((err) => {
         mythis.loding=false;
         console.log("请求失败:"+err)
       });
-
 
     },
     methods: {
@@ -210,7 +181,7 @@
           this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
           if (type===2){//删除数据
             this.loding=true;
-            deletePeople(this.tableDataTemp[row].id).then(response => {
+            deleteDepartment(this.tableDataTemp[row].sid).then(response => {
               mythis.loding=false;
               console.log("删除人员返回",response);
               const  {data} =response;
@@ -236,8 +207,13 @@
             });
           }
         }else {//编辑,带上id
-          this.$router.replace('/pepoleinfo_employee?id='+this.tableDataTemp[row].sid)
+         // this.$router.replace('/pepoleinfo_employee?id='+this.tableDataTemp[row].sid)
           // myId:this.$route.query.id,//拿到上个界面传过来的参数
+          mythis.deparementName=mythis.tableDataTemp[row].name;
+          mythis.isCompanyName2=true;
+          console.log(mythis.tableDataTemp[row].sid,'修改sid的值');
+          console.log(mythis.tableDataTemp[row].name,'修改name的值');
+          mythis.sid=mythis.tableDataTemp[row].sid;
         }
       },
       handleSizeChange(val) {
@@ -250,24 +226,13 @@
         this.tableDataTemp=[];//先清掉数据
         const mythis=this;
         this.loding=true;
-        getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
+        getDepartment({page:this.currentPage-1,size:this.pageSize}).then(response => {
           mythis.loding=false;
           //console.log("获取人员列表",response);
           const  {data,errorCode} =response;
           const  {requestData,total} =JSON.parse(data);
           mythis.totalNum=total;
           requestData.forEach(function (x, index) {//遍历插入
-            if (x.birthday!==undefined){//没有时间
-             // console.log(x.birthday,'x.birthday');
-              //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
-             // console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
-              x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-            }else {
-              x.birthday='';
-            }
-            if (x.icCard===undefined || x.icCard===''){
-              x.icCard='未绑定';
-            }
             mythis.tableDataTemp.push(x);
           });
         }).catch((err) => {
@@ -285,13 +250,13 @@
             var ids='';
             var mythis=this;
             this.multipleSelection.forEach(function (x,index) {
-              ids=ids+x.id;
+              ids=ids+x.sid;
               if (index!==mythis.multipleSelection.length-1){
                 ids=ids+',';
               }
             });
             this.loding=true;
-            deletePeople(ids).then(response => {
+            deleteDepartment(ids).then(response => {
               mythis.loding=false;
              // console.log("删除人员返回",response);
               const  {data} =response;
@@ -314,47 +279,83 @@
           }
         }
       },
-      handleClickAddPepole(){//新增人员
-        this.$router.replace('/pepoleinfo')
-      },
-      finds(){//搜索
-        if (this.input.trim()===''){
+      dialog_companyName(){//新增部门
+        this.isCompanyName=false;
+        if (this.deparementName===''){
+          this.$message.error('部门名称不能为空')
           return;
         }
-        var mythis=this;
+        let fd = new FormData();//转成FormData格式上传
+        fd.append('name', this.deparementName);
         this.loding=true;
-        getPeopleInfoFind({name:this.input,type:1}).then(response => {
-          mythis.loding=false;
-          const  {data} =response;
-          console.log("搜索人员返回",data);
-          var de=JSON.parse(data);
-          if (de!==undefined && de.length>0){
-            mythis.tableDataTemp=[];//先清掉数据
-            mythis.totalNum=de.length;
-            de.forEach(function (x, index) {//遍历插入
-              if (x.birthday !== undefined && x.birthday !== 0) {//没有时间
-                //console.log(x.birthday,'x.birthday');
-                //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
-                //console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
-                x.birthday = Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-                x.startTime = Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
-                x.endTime = Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
-              } else {
-                x.birthday = '';
-              }
-              if (x.icCard===undefined || x.icCard===''){
-                x.icCard='未绑定';
-              }
-              mythis.tableDataTemp.push(x);
-            });
+        var mthis=this;
+        ax({
+          method: 'post',
+          url: '/app/person/createDepartment',
+          timeout:10000,
+          data:fd,
+        }).then(function(res) {
+          console.log(res.data,"创建部门");
+          const {errorCode,errorMsg,data} = res.data;
+          if (errorCode===200){
+            const {code,msg} = JSON.parse(data);
+            if (code===1){
+              mthis.$message.success('创建部门成功');
+              mthis.handleCurrentChange(mthis.currentPage)
+            }else {
+              mthis.$message.error(msg);
+            }
           }else {
-            mythis.$message.error('未搜索到人员')
+            mthis.$message.error(errorMsg);
           }
-        }).catch((err) => {
-          mythis.loding=false;
-          console.log("请求失败:"+err)
+        }).catch(function (error) {
+          console.log("error调用",error);
+          mthis.$message.error('创建部门失败:'+error.message);
+          console.log(window.location.host)
+
+        }).finally(function () {
+          console.log("finally调用");
+          mthis.loding=false;
+          mthis.deparementName='';
         });
-      }
+      },
+      dialog_companyName2(){//编辑部门
+        this.isCompanyName2=false;
+        let fd = new FormData();//转成FormData格式上传
+        fd.append('name', this.deparementName);
+        fd.append('sid', this.sid);
+        this.loding=true;
+        var mthis=this;
+        ax({
+          method: 'post',
+          url: '/app/person/updataDepartment',
+          timeout:10000,
+          data:fd,
+        }).then(function(res) {
+          console.log(res.data,"编辑部门");
+          const {errorCode,errorMsg,data} = res.data;
+          if (errorCode===200){
+            const {code,msg} = JSON.parse(data);
+            if (code===1){
+              mthis.$message.success('修改部门成功');
+              mthis.handleCurrentChange(mthis.currentPage)
+            }else {
+              mthis.$message.error(msg);
+            }
+          }else {
+            mthis.$message.error(errorMsg);
+          }
+        }).catch(function (error) {
+          console.log("error调用",error);
+          mthis.$message.error('修改部门失败:'+error.message);
+          console.log(window.location.host)
+        }).finally(function () {
+          console.log("finally调用");
+          mthis.loding=false;
+          mthis.deparementName='';
+          mthis.sid='';
+        });
+      },
     }
   }
 </script>

@@ -106,7 +106,7 @@
         multipleSelection: [],
         totalNum:0,//总数
         currentPage: 1,//默认显示第一页
-        pageSize:12,//默认每页显示10条
+        pageSize:15,//默认每页显示10条
         input: '', //搜素的输入值
         isSC:false,
       }
@@ -119,7 +119,7 @@
     mounted() {
 
       const mythis=this;
-      this.loading=true;
+      this.loding=true;
       getHistroy({page:this.currentPage-1,size:this.pageSize,peopleType:1,name:'',type:2,startTime:0,endTime:0}).then(response => {
         const  {data,errorCode} =response;
         const  {requestData,total} =JSON.parse(data);
@@ -147,7 +147,7 @@
       }).catch((err) => {
         console.log("请求失败:"+err)
       }).finally((a) => {
-        this.loading=false;
+        this.loding=false;
       });
 
     },

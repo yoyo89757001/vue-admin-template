@@ -99,6 +99,18 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/department',
+    component: Layout,
+    children: [
+      {
+        path: '/department',
+        name: '部门管理',
+        component: () => import('@/views/department/index'),
+        meta: { title: '部门管理', icon: 'bumen' }
+      }
+    ]
+  },
+  {
     path: '/form',
     component: Layout,
     children: [

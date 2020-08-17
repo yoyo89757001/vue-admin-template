@@ -32,9 +32,6 @@
                   <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
                 </el-form-item>
 
-                <el-form-item label="部门:">
-                  <el-input v-model="formUp.department" placeholder="请填写部门"></el-input>
-                </el-form-item>
 
                 <el-form-item label="性别:" prop="sex">
                   <el-col :span="9">

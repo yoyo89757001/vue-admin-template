@@ -118,7 +118,7 @@ export default {
 
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' });// 成功之后重定向到首页
             this.loading = false
