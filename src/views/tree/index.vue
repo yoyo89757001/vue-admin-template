@@ -63,12 +63,6 @@
         width="120">
       </el-table-column>
       <el-table-column
-        label="部门"
-        prop="department"
-        align="center"
-        width="150">
-      </el-table-column>
-      <el-table-column
         label="性别"
         align="center"
         width="120"

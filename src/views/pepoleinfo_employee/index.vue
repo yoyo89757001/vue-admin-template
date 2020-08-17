@@ -96,7 +96,7 @@
 
 <script>
   import  ax from 'axios'
-  import {getPeopleInfo,openCard} from '@/api/people'
+  import {getPeopleInfo,openCard,getDepartment} from '@/api/people'
   //import Moment from "moment";
 
 

@@ -231,6 +231,8 @@
             if (this.pepoleTypeDisabled && this.formUp.department===''){
               this.$message.error("请选择部门");
               return ;
+            }else {
+              this.formUp.department='';
             }
            // console.log('生日', Date.parse(this.formUp.birthday));
             fd.append('file', this.file);
