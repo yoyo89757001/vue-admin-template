@@ -256,7 +256,7 @@ export default {
         mqProt:8090,//端口
         shibieFaZhi:72,//识别阈值
         huoTi:false,//活体开关
-        openCard:false,//是否刷卡开关
+        openCard:true,//是否刷卡开关
         mima:123456,//门禁密码
         companyName:'请设置公司名称',//公司名称
         ruKuFaceSize:72,//入库脸大小
