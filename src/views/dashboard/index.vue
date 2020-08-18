@@ -122,7 +122,7 @@ export default {
           tooltip: {},
           legend: {
             color:['#1f85ff'],
-            data:['总人数']
+            data:['人数']
           },
           xAxis: {
             data: names,
