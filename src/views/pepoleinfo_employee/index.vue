@@ -226,8 +226,7 @@
           if (valid) {
 
             let fd = new FormData();//转成FormData格式上传
-
-            console.log('生日', Date.parse(this.formUp.birthday));
+          //  console.log('生日', Date.parse(this.formUp.birthday));
             fd.append('file', this.file);
             fd.append('sid',this.formUp.sid);
             fd.append('name',this.formUp.name);

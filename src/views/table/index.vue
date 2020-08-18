@@ -210,7 +210,7 @@
           this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
           if (type===2){//删除数据
             this.loding=true;
-            deletePeople(this.tableDataTemp[row].id).then(response => {
+            deletePeople(this.tableDataTemp[row].sid).then(response => {
               mythis.loding=false;
               console.log("删除人员返回",response);
               const  {data} =response;
@@ -285,7 +285,7 @@
             var ids='';
             var mythis=this;
             this.multipleSelection.forEach(function (x,index) {
-              ids=ids+x.id;
+              ids=ids+x.sid;
               if (index!==mythis.multipleSelection.length-1){
                 ids=ids+',';
               }

@@ -119,7 +119,7 @@
     data() {
       return {
         sid:'',
-        formLabelWidth: '40vw',
+        formLabelWidth: '30vw',
         isCompanyName:false,//控制修改公司名称的弹窗显示
         isCompanyName2:false,//控制修改公司名称的弹窗显示
         loding:false,

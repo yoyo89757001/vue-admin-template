@@ -55,6 +55,13 @@ export function getConfig() {
   })
 }
 
+export function getDashboard() {
+  return request({
+    url: '/app/person/getDashboard',
+    method: 'get',
+  })
+}
+
 export function getPeopleInfoFind(data) {
   return request({
     url: '/app/person/finds',

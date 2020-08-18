@@ -17,7 +17,7 @@ import 'lib-flexible'
 //1.安装echarts依赖   npm install echarts --save
 //2.在main.js中全局中引用
 import echarts from 'echarts'
-Vue.prototype.$echarts = echarts
+Vue.prototype.$echarts = echarts;
 
 import '@/icons' // icon
 import '@/permission' // permission control
