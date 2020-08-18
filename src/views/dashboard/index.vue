@@ -138,7 +138,6 @@ export default {
             }
           }]
         });
-        myChart.setOption(option);
         window.addEventListener("resize", function () {
           myChart.resize()
         })
