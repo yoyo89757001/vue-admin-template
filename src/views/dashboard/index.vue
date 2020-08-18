@@ -30,11 +30,11 @@ export default {
     getDashboard().then(response => {
       // console.log("获取人员列表",response);
       const  {data,errorCode} =response;
-      const  {sex1,sex2,yg,fk,xDataString,xDataInt} =JSON.parse(data);
+      const  {sex1,sex2,yg,fk,xDataString,xDataInt,total} =JSON.parse(data);
 
       mythis.getEchartData1(sex1,sex2);
       mythis.getEchartData2(yg,fk);
-      mythis.getEchartData3(xDataString,xDataInt);
+      mythis.getEchartData3(xDataString,xDataInt,total);
 
     }).catch((err) => {
       console.log("请求失败:"+err)
@@ -111,18 +111,18 @@ export default {
         })
       }
     },
-    getEchartData3(names,values) {
+    getEchartData3(names,values,total) {
       const chart = this.$refs.chart13;
       if (chart) {
         const myChart = this.$echarts.init(chart);
         myChart.setOption({
           title: {
-            text: '各部门人数统计'
+            text: '各部门人数统计(总人数:'+total+")"
           },
           tooltip: {},
           legend: {
             color:['#1f85ff'],
-            data:['人数']
+            data:['总人数']
           },
           xAxis: {
             data: names,
