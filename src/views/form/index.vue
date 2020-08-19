@@ -283,7 +283,7 @@ export default {
       value: ''
     }
   },
-  mounted() {
+  mounted() {//
     var mythis=this;
     this.loading=true;
     getConfig().then(response => {

@@ -2,13 +2,13 @@
   <div class="dashboard-container">
     <el-row>
       <el-col :span="12">
-        <div ref="chart11" style="width:40vw;height:22vw;text-align: center;margin-top: 20px;margin-left: 20px"></div>
+        <div ref="chart11" style="width:40vw;height:68vw;text-align: center;margin-top: 20px;margin-left: 20px"></div>
       </el-col>
       <el-col :span="12">
-        <div ref="chart12" style="width:40vw;height:22vw;text-align: center;margin-top: 20px"></div>
+        <div ref="chart12" style="width:40vw;height:68vw;text-align: center;margin-top: 20px"></div>
       </el-col>
     </el-row>
-    <div ref="chart13" style="height:22vw;margin-top: 20px;margin-left: 20px;"></div>
+    <div ref="chart13" style="height:92vw;margin-top: 20px;margin-left: 20px;width: 90vw"></div>
   </div>
 </template>
 
@@ -56,6 +56,10 @@ export default {
             text: "男女比例",
           },
           series: {
+            label:{
+              show:true,
+              position:'inside'
+            },
             itemStyle: {
               // 阴影的大小
               shadowBlur: 15,
@@ -89,6 +93,10 @@ export default {
             text: "类型比例",
           },
           series: {
+            label:{
+              show:true,
+              position:'inside'
+            },
             itemStyle: {
               // 阴影的大小
               shadowBlur: 15,
@@ -131,6 +139,10 @@ export default {
           },
           yAxis: {},
           series: [{
+            label:{
+              show:true,
+              position:'inside'
+            },
             name: '人数',
             type: 'bar',
             data: values,

@@ -74,7 +74,7 @@
                 </el-form-item>
 
 
-                <el-form-item label="备注信息">
+                <el-form-item label="备注信息:">
                   <el-input type="textarea" v-model="formUp.remarks" placeholder="请输入备注信息"></el-input>
                 </el-form-item>
                 <el-form-item style="text-align: center;margin-top: 20px">
