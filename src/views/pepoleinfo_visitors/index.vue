@@ -172,14 +172,14 @@
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
         const isPNG = file.type === 'image/png';
-        const isLt2M = file.size / 1024 / 1024 < 2;
+        const isLt2M = file.size / 1024 / 1024 < 2.5;
 
         if (!isJPG && !isPNG) {
           this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
           return false;
         }
         if (!isLt2M) {
-          this.$message.error('图片不能超过 2MB 请裁剪后上传');
+          this.$message.error('图片不能超过 2.5MB 请裁剪后上传');
           return false;
         }
         this.file=file;

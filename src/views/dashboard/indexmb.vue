@@ -128,6 +128,7 @@ export default {
         myChart.setOption({
           title: {
             text: '各部门人数统计(总人数:'+total+")"
+
           },
           tooltip: {},
           legend: {

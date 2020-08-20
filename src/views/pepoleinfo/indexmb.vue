@@ -106,6 +106,7 @@
 <script>
   import  ax from 'axios'
   import {openCard,getDepartment} from '@/api/people'
+  import fileUtils from '@/utils/fileUtils.js'
   //import Moment from "moment";
 
 
@@ -142,6 +143,7 @@
         loading:false,
         loadingBD:false,
         file:'',
+        orient:'',
         departmentList: [],
         formUp: {
           name: '',
@@ -172,20 +174,51 @@
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
         const isPNG = file.type === 'image/png';
-        const isLt2M = file.size / 1024 / 1024 < 2;
+        const isLt2M = file.size / 1024 / 1024 < 2.5;
 
         if (!isJPG && !isPNG) {
           this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
           return false;
         }
         if (!isLt2M) {
-          this.$message.error('图片不能超过 2MB 请裁剪后上传');
+          this.$message.error('图片不能超过 2.5MB 请裁剪后上传');
           return false;
         }
         this.file=file;
         this.imageUrl = URL.createObjectURL(file);
+        var myth=this;
+        return new Promise((resolve) => {
+          fileUtils.getOrientation(file).then((orient) => {
+            //console.log(file,'源文件');
+            myth.orient=orient;
+            console.log(orient,'方向');
+            // if (orient && orient === 6) {
+            //   let reader = new FileReader();
+            //   let img = new Image();
+            //   var newFile=null;
+            //   reader.readAsDataURL(file);
+            //   reader.onload = (e) => {
+            //     img.src = e.target.result;
+            //     img.onload = function () {
+            //       const data = fileUtils.rotateImage(img, img.width, img.height);
+            //       newFile = fileUtils.dataURLtoFile(data, file.name);
+            //
+            //      // console.log('新文件',newFile);
+            //       resolve();
+            //     }
+            //   };
+            //
+            // } else {
+            //   console.log('BBBBBB');
+            //  // myth.file=file;
+            //  // myth.imageUrl = URL.createObjectURL(file);
+            //   resolve()
+            // }
+            resolve();
+          })
+        });
 
-        return false;
+       // return false;
       },
       pepolechange(){//选择人员类型
         this.pepoleTypeDisabled = this.formUp.peopleType !== 2;
@@ -221,8 +254,9 @@
               this.$message.error("请选择部门");
               return ;
             }
-           // console.log('生日', Date.parse(this.formUp.birthday));
+           // console.log('上传的文件', this.file);
             fd.append('file', this.file);
+            fd.append('orient', this.orient);
             fd.append('name',this.formUp.name);
             fd.append('department', this.formUp.department);
             fd.append('sex', this.formUp.sex);
@@ -300,7 +334,8 @@
       jiqileixng(vue){
         console.log(vue,'选中的部门值');
         this.formUp.department=vue;
-      }
+      },
+
     }
   }
 </script>

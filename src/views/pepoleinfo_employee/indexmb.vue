@@ -1,11 +1,11 @@
 <template>
-  <div style="display: flex;justify-content: center;margin-top: 2vw">
-    <el-card style="width: 80vw;margin-bottom: 2vw">
+  <div style="margin-top: 2vw">
+    <el-card style="width: 100vw;margin-bottom: 2vw">
       <el-row >
         <!--     1大块 el-row 用来分左右两大块 el-col每个子小块-->
         <el-col :span="12" :offset="6">
           <!--         el-container 用来分上下块，也可以用来分左右块  里面有el-header就是上下块-->
-          <el-container style="height: 50vw">
+          <el-container style="height: 300vw">
             <el-header>
               <div style="margin-top: 3vw;width: 32vw;display: flex;justify-content: center;">
                 <div style="text-align: center;z-index: 2">
@@ -26,12 +26,13 @@
                 <!--              </div>-->
               </div>
 
-              <el-form ref="formUp" :model="formUp" label-width="4vw" :rules="rules" style="position: absolute;margin-top: 1vw">
+
+              <el-form ref="formUp" :model="formUp"  :rules="rules" style="position: absolute;text-align: center;margin-left: -8vw" v-loading="loading">
                 <el-form-item label="姓名:" prop="name">
                   <el-input v-model="formUp.name" placeholder="请填写姓名"></el-input>
                 </el-form-item>
 
-                <el-form-item label="部门:"  required>
+                <el-form-item label="部门:"  required :hidden="pepoleTypeDisabled!==true" style="margin-top: -20px">
                   <div>
                     <el-select v-model="formUp.department" placeholder="请选择" @change="jiqileixng" style="width: 100%">
                       <el-option
@@ -44,42 +45,37 @@
                   </div>
                 </el-form-item>
 
-                <el-form-item label="性别:" prop="sex">
-                  <el-col :span="9">
-                    <el-select v-model="formUp.sex" placeholder="-请选择-">
-                      <el-option label="男" value="1"></el-option>
-                      <el-option label="女" value="2"></el-option>
-                    </el-select>
-                  </el-col>
-                  <el-col :span="13" :offset=2>
-                    <el-form-item label="出生日期:">
-                      <el-date-picker type="date" placeholder="选择日期" v-model="formUp.birthday" style="width: 100%;"></el-date-picker>
-                    </el-form-item>
-                  </el-col>
+
+                <el-form-item label="性别:" prop="sex" style="margin-top: -20px">
+                  <el-select v-model="formUp.sex" placeholder="-请选择-" style="width: 100%">
+                    <el-option label="男" value="1"></el-option>
+                    <el-option label="女" value="2"></el-option>
+                  </el-select>
                 </el-form-item>
 
-                <el-form-item label="IC卡号:">
-                  <el-row >
-                    <el-col :span="18">
-                      <el-input v-model="formUp.icCard" placeholder="点击绑定按钮后,再到机器刷卡" ></el-input>
-                    </el-col>
-                    <el-col :span="6">
-                      <el-button type="primary" :loading="loadingBD" style="width: 100px;height: 40px;text-align: center;margin-left: 24px" @click="onBind">绑定</el-button>
-                    </el-col>
-                  </el-row>
+                <el-form-item label="出生日期:" style="margin-top: -20px">
+                  <el-date-picker type="date" placeholder="选择日期" v-model="formUp.birthday" style="width: 100%;"></el-date-picker>
                 </el-form-item>
 
-                <el-form-item label="手机号码:">
+                <el-form-item label="IC卡号:" style="margin-top: -20px">
+
+                  <el-input v-model="formUp.icCard" placeholder="点击绑定按钮后,再到机器刷卡" style="font-size: 12px"></el-input>
+
+                  <el-button type="primary" :loading="loadingBD" style="width: 100px;height: 40px;text-align: center;margin-top: 8px" @click="onBind">绑定</el-button>
+
+                </el-form-item>
+
+                <el-form-item label="手机号码:" style="margin-top: -20px">
                   <el-input v-model="formUp.phone" placeholder="请填写手机号码" oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"></el-input>
                 </el-form-item>
 
 
-                <el-form-item label="备注信息:">
+                <el-form-item label="备注信息:" style="margin-top: -20px">
                   <el-input type="textarea" v-model="formUp.remarks" placeholder="请输入备注信息"></el-input>
                 </el-form-item>
-                <el-form-item style="text-align: center;margin-top: 20px">
-                  <el-button type="danger" style="margin-right: 30px;width: 100px;height: 50px" @click="onCancel">取消</el-button>
-                  <el-button type="primary"  style="width: 100px;height: 50px" @click="onSubmit('formUp')">提交</el-button>
+                <el-form-item style="text-align: center;margin-top: 20px" >
+                  <el-button type="danger" style="margin-right: 10px;width: 20vw;height: 40px;font-size: 14px" @click="onCancel">取消</el-button>
+                  <el-button type="primary"  style="width: 20vw;height: 40px;font-size:14px;" @click="onSubmit('formUp')">提交</el-button>
                 </el-form-item>
               </el-form>
 
@@ -157,6 +153,7 @@
         loadingBD:false,
         departmentList: [],
         file:'',
+        orient:'',
         formUp: {
           name: '',
           department: '',
@@ -199,8 +196,15 @@
         }
         this.file=file;
         this.imageUrl = URL.createObjectURL(file);
+        var myth=this;
+        return new Promise((resolve) => {
+          fileUtils.getOrientation(file).then((orient) => {
+            myth.orient=orient;
+            console.log(orient,'方向');
+            resolve();
+          })
+        });
 
-        return false;
       },
       onSubmit(formName){//提交
         this.$refs[formName].validate((valid) => {
@@ -229,6 +233,7 @@
           //  console.log('生日', Date.parse(this.formUp.birthday));
             fd.append('file', this.file);
             fd.append('sid',this.formUp.sid);
+            fd.append('orient', this.orient);
             fd.append('name',this.formUp.name);
             fd.append('department', this.formUp.department);
             fd.append('sex', this.formUp.sex);
@@ -326,14 +331,14 @@
   .avatar-uploader-icon {
     font-size: 22px;
     color: #8c939d;
-    width: 8.4vw;
-    height: 8.4vw;
-    line-height: 8.4vw;
+    width: 30vw;
+    height: 30vw;
+    line-height: 30vw;
     text-align: center;
   }
   .avatar {
-    width: 8.4vw;
-    height: 8.4vw;
+    width: 30vw;
+    height: 30vw;
     display: block;
   }
 

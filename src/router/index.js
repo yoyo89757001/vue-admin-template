@@ -222,19 +222,19 @@ export const constantRoutesMB = [
     component: Layout,
     //  redirect: '/example/table',
     name: '人员管理',
-    meta: { title: '人员管理2', icon: 'el-icon-s-help' },
+    meta: { title: '人员管理', icon: 'el-icon-s-help' },
     children: [
       {
         path: '/table',
         name: '员工',
         component: () => import('@/views/table/indexmb'),
-        meta: { title: '员工2', icon: 'table' }
+        meta: { title: '员工', icon: 'table' }
       },
       {
         path: '/tree',
         name: '访客',
         component: () => import('@/views/tree/indexmb'),
-        meta: { title: '访客2', icon: 'tree' }
+        meta: { title: '访客', icon: 'tree' }
       }
     ]
   },
@@ -249,13 +249,13 @@ export const constantRoutesMB = [
       {
         path: '/subject',
         name: '刷脸记录',
-        component: () => import('@/views/history/index_people'),
+        component: () => import('@/views/history/index_peoplemb'),
         meta: { title: '刷脸记录', icon: 'user' }
       },
       {
         path: '/card',
         name: '刷卡记录',
-        component: () => import('@/views/history/index_card'),
+        component: () => import('@/views/history/index_cardmb'),
         meta: { title: '刷卡记录', icon: 'eye-open' }
       }
     ]
@@ -267,7 +267,7 @@ export const constantRoutesMB = [
       {
         path: '/department',
         name: '部门管理',
-        component: () => import('@/views/department/index'),
+        component: () => import('@/views/department/indexmb'),
         meta: { title: '部门管理', icon: 'bumen' }
       }
     ]
@@ -279,7 +279,7 @@ export const constantRoutesMB = [
       {
         path: '/form',
         name: '设备配置',
-        component: () => import('@/views/form/index'),
+        component: () => import('@/views/form/indexmb'),
         meta: { title: '设备配置', icon: 'shezhi' }
       }
     ]
@@ -306,7 +306,7 @@ export const constantRoutesMB = [
       {
         path: '/pepoleinfo_visitors',
         name: '访客详情',
-        component: () => import('@/views/pepoleinfo_visitors/index'),
+        component: () => import('@/views/pepoleinfo_visitors/indexmb'),
         meta: { title: '访客详情' }
       }
     ]
@@ -319,7 +319,7 @@ export const constantRoutesMB = [
       {
         path: '/pepoleinfo_employee',
         name: '员工详情',
-        component: () => import('@/views/pepoleinfo_employee/index'),
+        component: () => import('@/views/pepoleinfo_employee/indexmb'),
         meta: { title: '员工详情' }
       }
     ]

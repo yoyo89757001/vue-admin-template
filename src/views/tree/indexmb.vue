@@ -161,7 +161,7 @@
         singlepage:true,//只有一页时 隐藏分页
         headUrl:'',
         tableData: [],
-        tableDataTemp: [{name:'ff'}],
+        tableDataTemp: [],
         multipleSelection: [],
         totalNum:0,//总数
         currentPage: 1,//默认显示第一页

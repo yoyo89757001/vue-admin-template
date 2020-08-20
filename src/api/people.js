@@ -55,6 +55,13 @@ export function getConfig() {
   })
 }
 
+export function getchongqi() {
+  return request({
+    url: '/app/chongqi',
+    method: 'get',
+  })
+}
+
 export function getDashboard() {
   return request({
     url: '/app/person/getDashboard',

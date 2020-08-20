@@ -1,10 +1,10 @@
 <template>
-  <div style="display: flex;justify-content: center;margin-top: 40px;margin-bottom: 40px">
-    <el-card style="width: 82vw;height: 42vw;" v-loading.fullscreen.lock="loading">
+  <div style="margin-top: 40px;margin-bottom: 40px">
+    <el-card style="width: 100vw;height: 232vw;" v-loading.fullscreen.lock="loading">
       <el-row style="margin-top: 1vw" ref="multipleTable">
         <el-col :span="11">
-          <el-form ref="form" :model="form" style="margin-left: 30px">
-            <el-form-item label="MQ端口号:" style="display: flex;justify-items: center;">
+          <el-form ref="form" :model="form" style="margin-left: 30px;position: relative">
+            <el-form-item label="MQ端口号:">
               <div>
                 <span class="text-shenglue">{{form.mqProt}}</span>
                 <el-button type="primary" style="margin-left: 10px" @click="isEndUrlVisible=true">修改</el-button>
@@ -21,17 +21,13 @@
             </el-form-item>
             <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 1vw;"></div>
             <!--  ------------------------------------------------------->
-            <el-row style="margin-top: 1vw">
-              <el-col :span="8">
-                <span style="font-size: 15px;color: #666666;margin-right: 30px"><strong>{{form.huoTi===true?'活体验证打开':'活体验证关闭'}}</strong></span>
-              </el-col>
-              <el-col :span="4" :offset="12">
-                <el-switch v-model="form.huoTi" :disabled="isLivingDisabled" @change="isLivingChang" style="margin-left: 0.6vw"></el-switch>
-              </el-col>
+            <el-row style="margin-top: 5vw">
+                <span style="font-size: 15px;color: #666666;"><strong>{{form.huoTi===true?'活体验证打开':'活体验证关闭'}}</strong></span>
+                <el-switch v-model="form.huoTi" :disabled="isLivingDisabled" @change="isLivingChang" style="margin-left: 1vw"></el-switch>
             </el-row>
-            <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 1vw;"></div>
+            <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 5vw;"></div>
             <!--  ------------------------------------------------------->
-            <el-form-item label="门禁密码:" style="display: flex;justify-items: center;margin-top: 1vw">
+            <el-form-item label="门禁密码:">
               <div>
                 <span class="text-shenglue">{{form.mima}}</span>
                 <el-button type="primary" style="margin-left: 16px" @click="isDoorPassword=true">修改</el-button>
@@ -50,14 +46,14 @@
             <!--  ------------------------------------------------------->
             <el-form-item label="摄像头方向:" style="margin-top: 1vw;">
               <div>
-                <span class="text-shenglue">摄像头ID:{{form.cameraId}}</span>
-                <span class="text-shenglue" style="margin-left: 4.5vw;margin-top: 0">摄像头预览方向:{{form.cameraPreviewRotation}}</span>
-                <span class="text-shenglue" style="margin-left: 4.5vw;margin-top: 0">摄像头算法方向:{{form.faceRotation}}</span>
-                <span class="text-shenglue" style="margin-left: 4.5vw;margin-top: 0">红外摄像头预览方向:{{form.cameraPreviewRotation2}}</span>
-                <span class="text-shenglue" style="margin-left: 4.5vw;margin-top: 0">红外摄像头算法方向:{{form.faceRotation2}}</span>
-                <span class="text-shenglue" style="margin-left: 4.5vw;margin-top: 0">陌生人抓拍图片方向:{{form.msrBitmapRotation}}</span>
+                <span class="text-shenglue" style="font-size: 12px">摄像头ID:{{form.cameraId}}</span>
+                <span class="text-shenglue" style="font-size: 12px">摄像头预览方向:{{form.cameraPreviewRotation}}</span>
+                <span class="text-shenglue" style="font-size: 12px">摄像头算法方向:{{form.faceRotation}}</span>
+                <span class="text-shenglue" style="font-size: 12px">红外摄像头预览方向:{{form.cameraPreviewRotation2}}</span>
+                <span class="text-shenglue" style="font-size: 12px">红外摄像头算法方向:{{form.faceRotation2}}</span>
+                <span class="text-shenglue" style="font-size: 12px">陌生人抓拍图片方向:{{form.msrBitmapRotation}}</span>
                 <p>
-                  <el-button type="primary" style="margin-left: 29.2vw" @click="isDirection=true">修改</el-button>
+                  <el-button type="primary" style="margin-left: 10px" @click="isDirection=true">修改</el-button>
                 </p>
 
                 <!--   弹窗-->
@@ -144,12 +140,12 @@
         </el-col>
         <!--   中间分割线-->
         <el-col :span="2" style="text-align: center;display: flex;justify-content: center;margin-top: 0">
-          <div style="border:1px solid;float:left;height: 722px;color: rgba(0,0,0,0.07)"></div>
+          <div style="border:1px solid;float:left;height: 240vw;color: rgba(0,0,0,0.07)"></div>
         </el-col>
 
         <el-col :span="11" >
           <el-form ref="form" :model="form">
-            <el-form-item label="识别阈值:" style="display: flex;justify-items: center;">
+            <el-form-item label="识别阈值:">
               <div>
                   <span class="text-shenglue">{{form.shibieFaZhi}}</span>
                 <el-button type="primary" style="margin-left: 20px" @click="isRecognitionThreshold=true">修改</el-button>
@@ -166,17 +162,13 @@
             </el-form-item>
             <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 1vw;"></div>
             <!--  ------------------------------------------------------->
-            <el-row style="margin-top: 1vw">
-              <el-col :span="8">
-                <span style="font-size: 15px;color: #666666;margin-right: 30px"><strong>{{form.openCard===true?'刷卡模式打开':'刷卡模式关闭'}}</strong></span>
-              </el-col>
-              <el-col :span="4" :offset="11">
-                <el-switch v-model="form.openCard" :disabled="isPasswordDisabled" @change="isPasswordChang" style="margin-left: 0.7vw"></el-switch>
-              </el-col>
+            <el-row style="margin-top: 5vw">
+                <span style="font-size: 15px;color: #666666"><strong>{{form.openCard===true?'刷卡模式打开':'刷卡模式关闭'}}</strong></span>
+                <el-switch v-model="form.openCard" :disabled="isPasswordDisabled" @change="isPasswordChang" style="margin-left: 1vw"></el-switch>
             </el-row>
-            <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 1vw;"></div>
+            <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 5vw;"></div>
             <!--  ------------------------------------------------------->
-            <el-form-item label="公司名称:" style="display: flex;justify-items: center;margin-top: 1vw">
+            <el-form-item label="公司名称:">
               <div>
                 <span class="text-shenglue">{{form.companyName}}</span>
                 <el-button type="primary" style="margin-left: 16px" @click="isCompanyName=true">修改</el-button>
@@ -193,9 +185,9 @@
             </el-form-item>
             <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 1vw;"></div>
             <!--  ------------------------------------------------------->
-            <el-form-item label="入库阈值:" style="display: flex;justify-items: center;margin-top: 1vw">
+            <el-form-item label="入库阈值:">
               <div>
-                <span class="text-shenglue">入库最小人脸:{{form.ruKuFaceSize}}; 入库模糊度:{{form.ruKuMoHuDu}}</span>
+                <span style="color: #99a9bf;font-size: 14px;">入库最小人脸:{{form.ruKuFaceSize}}; 入库模糊度:{{form.ruKuMoHuDu}}</span>
                 <el-button type="primary" style="margin-left: 16px" @click="isStorageThreshold=true">修改</el-button>
                 <!--   弹窗-->
                 <el-dialog title="修改入库阈值" :visible.sync="isStorageThreshold" center :width="formLabelWidth">
@@ -212,7 +204,7 @@
             </el-form-item>
             <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 1vw;"></div>
             <!--  ------------------------------------------------------->
-            <el-form-item label="选择机型:" style="display: flex;justify-items: center;margin-top: 1vw">
+            <el-form-item label="选择机型:">
               <div>
                 <el-select v-model="form.dangqianChengShi2" placeholder="请选择" @change="jiqileixng">
                   <el-option
@@ -227,35 +219,34 @@
             <!--  ------------------------------------------------------->
             <div style="border:1px solid;float:bottom;width: 35vw;height: 1px;color: rgba(0,0,0,0.07);margin-top: 1vw;"></div>
 
-              <el-row style="margin-top: 2vw">
-                <el-col :span="12">
-                  <el-button type="primary" @click="isMiMa=true">修改登录密码</el-button>
-                  <!--   弹窗-->
-                  <el-dialog title="修改登录密码" :visible.sync="isMiMa" center :width="formLabelWidth">
-                    <span>旧登录密码</span>
-                    <el-input v-model="form.mima1" autocomplete="off" type="text" maxlength="12" style="margin-top: 10px;margin-bottom: 10px"></el-input>
-                    <span >新登录密码</span>
-                    <el-input v-model="form.mimanew" autocomplete="off" type="text" maxlength="12" style="margin-top: 10px;"></el-input>
-                    <div slot="footer" class="dialog-footer">
-                      <el-button @click="isMiMa = false" style="margin-right: 20px">取 消</el-button>
-                      <el-button type="primary" @click="xiugaimima">确 定</el-button>
-                    </div>
-                  </el-dialog>
-                </el-col>
-                <el-col :span="12" >
-                  <el-popover
-                    placement="top"
-                    width="172"
-                    visible-arrow="true">
-                    <p style="text-align: center;margin-top: 1vw;margin-bottom: 1vw">您确定要重启设备吗？</p>
-                    <div style="text-align: center;">
-                      <el-button size="mini" type="text" @click="handleClick(1,3)">取消</el-button>
-                      <el-button type="danger" size="mini" @click="handleClick(1,2)">确定</el-button>
-                    </div>
-                    <el-button type="danger" slot="reference">重启设备</el-button>
-                  </el-popover>
-                </el-col>
-              </el-row>
+            <el-row style="margin-top: 5vw">
+
+                <el-button type="primary" @click="isMiMa=true" style="margin-bottom: 5vw;margin-left: 1vw">修改登录密码</el-button>
+                <!--   弹窗-->
+                <el-dialog title="修改登录密码" :visible.sync="isMiMa" center :width="formLabelWidth">
+                  <span>旧登录密码</span>
+                  <el-input v-model="form.mima1" autocomplete="off" type="text" maxlength="12" style="margin-top: 10px;margin-bottom: 10px"></el-input>
+                  <span >新登录密码</span>
+                  <el-input v-model="form.mimanew" autocomplete="off" type="text" maxlength="12" style="margin-top: 10px;"></el-input>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button @click="isMiMa = false" style="margin-right: 20px">取 消</el-button>
+                    <el-button type="primary" @click="xiugaimima">确 定</el-button>
+                  </div>
+                </el-dialog>
+
+                <el-popover
+                  placement="top"
+                  width="172"
+                  visible-arrow="true">
+                  <p style="text-align: center;margin-top: 1vw;margin-bottom: 1vw">您确定要重启设备吗？</p>
+                  <div style="text-align: center;">
+                    <el-button size="mini" type="text" @click="handleClick(1,3)">取消</el-button>
+                    <el-button type="danger" size="mini" @click="handleClick(1,2)">确定</el-button>
+                  </div>
+                  <el-button type="danger" slot="reference" style="margin-left: 1vw">重启设备</el-button>
+                </el-popover>
+
+            </el-row>
 
           </el-form>
         </el-col>
@@ -272,6 +263,7 @@ import {getConfig,getchongqi} from '@/api/people'
 export default {
   data() {
     return {
+
       isEndUrlVisible:false,//修改端口的显示隐藏的控制值
       isRecognitionThreshold:false,//修改识别阈值的显示隐藏的控制值
       isLivingDisabled:false,//活体开关启用控制 注意： false是启用
@@ -280,8 +272,8 @@ export default {
       isCompanyName:false,//控制修改公司名称的弹窗显示
       isDirection:false,//控制方向的弹窗显示
       isStorageThreshold:false,//控制入库阈值的弹窗显示隐藏
-      isMiMa:false,//控制修改密码弹窗显示隐藏
       loading:false,
+      isMiMa:false,//控制修改密码弹窗显示隐藏
       form:{
         mqProt:8090,//端口
         shibieFaZhi:72,//识别阈值
@@ -301,7 +293,7 @@ export default {
         mima1:'',
         mimanew:'',
       },
-      formLabelWidth: '40vw',
+      formLabelWidth: '80vw',
       options: [{
         dangqianChengShi2: '0',
         label: 'ZL001' //智连
@@ -499,7 +491,7 @@ export default {
     text-overflow:ellipsis;
     color: #99a9bf;
     size: 16px;
-    width: 25vw;
+    width: 40vw;
 
   }
 

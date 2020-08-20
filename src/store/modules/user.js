@@ -35,8 +35,8 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         const { data,errorMsg,errorCode } = response;
         console.log(data,'登录返回的值',errorMsg,errorCode);
-       // const {result,token,msg} = JSON.parse(data);
-        const {result,token,msg} = data;
+        const {result,token,msg} = JSON.parse(data);
+       // const {result,token,msg} = data;
         console.log(token,"token的值")
         if (result===0){
           console.log('登录返回的值')

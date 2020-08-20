@@ -80,8 +80,14 @@ service.interceptors.response.use(
       message: error.message,
       type: 'error',
       duration: 5 * 1000
-    })
+    });
+    // return {errorCode:200, data:{
+    //     result:1,
+    //     token:'admin-token',
+    //     msg:'登陆成功'
+    //   }}
     return Promise.reject(error)
+
   }
 )
 

@@ -26,7 +26,7 @@ const users = {
 module.exports = [
   // user login
   {
-    url: '/app/login',
+    url: '/app/loginssssss',
     type: 'post',
     response: config => {
       const { username } = config.body
@@ -53,7 +53,7 @@ module.exports = [
 
   // get user info
   {
-    url: '/app/getInfo',
+    url: '/app/getInfosssss',
     type: 'get',
     response: config => {
       const { token } = config.query

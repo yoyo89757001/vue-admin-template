@@ -54,7 +54,7 @@
 </template>
 <script>
 import { validUsername } from '@/utils/validate'
-import { getPeople,deletePeople,getDeviceKey } from '@/api/people'
+
 
 export default {
   name: 'Login',
@@ -108,7 +108,7 @@ export default {
     },
     handleLogin() {
 
-      // console.log("调用了顶顶顶:")
+     // console.log("调用了顶顶顶:",this.$router)
       // getDeviceKey().then(response => {
       //   this.$message.success(response.data + 'eeeeee')// 获取本机ip
       // }).catch((err) => {
