@@ -26,7 +26,7 @@ const users = {
 module.exports = [
   // user login
   {
-    url: '/app/loginssssss',
+    url: '/app/login',
     type: 'post',
     response: config => {
       const { username } = config.body
