@@ -1,5 +1,5 @@
 <template>
-  <div class="_calendar _container">
+  <div class="_calendar _container" v-loading="loading">
     <el-container>
       <el-main>
         <!-- <el-card> -->
@@ -56,7 +56,7 @@
               <i class="el-alert__icon el-icon-success is-big"></i>
               <div class="el-alert__content">
                 <span class="el-alert__title is-bold">{{item}} 班</span>
-                <i class="el-alert__closebtn el-icon-close" @click.stop="infoDel"></i>
+                <i class="el-alert__closebtn el-icon-close" @click.stop="infoDel(item)"></i>
               </div>
             </div>
           </div>
@@ -71,7 +71,9 @@
     <el-divider></el-divider>
     <p style="margin-left: 20px;color: #409EFF">选择每个星期上班的天数</p>
     <el-button  style="margin-left: 20px;margin-top: 20px;margin-bottom: 20px" v-for="(index,i) in buttontype" :type=index.type @click="weekClick(i)">{{index.name}}</el-button>
+    <el-divider></el-divider>
 
+    <p style="margin-left: 20px;color: #409EFF;margin-bottom: 20px">考勤设定</p>
     <p style="margin-left: 20px;">
       <template >
         <el-radio v-model="radio" label="1" @change="kaoqingChange">两次考勤</el-radio>
@@ -82,7 +84,7 @@
       <div>上班
         <el-time-select
           style="margin-right: 3vw;margin-left: 8px"
-          v-model="startTime"
+          v-model="startTime1"
           :picker-options="{
            start: '05:00',
            step: '0:10',
@@ -92,7 +94,7 @@
          下班
           <el-time-select
             style="margin-left: 8px"
-            v-model="endTime"
+            v-model="endTime1"
             :picker-options="{
            start: '12:00',
            step: '0:10',
@@ -162,18 +164,33 @@
       </div>
       <div style="margin-top: 20px">
         晚于
-        <el-input v-model="minute2_1" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
+        <el-input v-model="minute1_1" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
         为<span style="color: red"><strong>迟到</strong></span>
 
         <span style="margin-left: 10vw">早于</span>
-        <el-input v-model="minute2_2" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
+        <el-input v-model="minute1_2" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
         为<span style="color: red"><strong>早退</strong></span>
 
         <span style="margin-left: 10vw">下班后</span>
-        <el-input v-model="minute2_3" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
+        <el-input v-model="minute1_3" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
         为<span style="color: red"><strong>加班</strong></span>
 
       </div>
+    </div>
+    <el-divider></el-divider>
+    <p style="margin-left: 20px;color: #409EFF;margin-bottom: 20px">缺勤设定</p>
+
+    <div style="margin-top: 20px;margin-left: 20px">
+      迟到超过
+      <el-input v-model="minute2_1" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
+      为<span style="color: red"><strong>缺勤</strong></span>
+      <span style="margin-left: 10vw">早退超过</span>
+      <el-input v-model="minute2_2" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
+      为<span style="color: red"><strong>缺勤</strong></span>
+    </div>
+    <el-divider></el-divider>
+    <div style="width: 100%;text-align: center;margin-bottom: 80px;margin-top: 10px">
+      <el-button type="primary" @click="baocun">保存设置</el-button>
     </div>
 
 
@@ -182,15 +199,17 @@
 <script>
   // import calendarDrawer from "../calendar/calendar-drawer.vue";
  // import calendarForm from "../calendar/calendar-form.vue";
+  import  ax from 'axios'
+
+
   export default {
     components: {  },
     data: function() {
       return {
         value: new Date(),
-        isArrange: ['2020-06-08'],
+        isArrange: [],
         radio: '1',
-        startTime:'',
-        endTime:'',
+        loading:false,
         startTime1:'',
         endTime1:'',
         startTime2:'',
@@ -200,8 +219,8 @@
         minute1_3:'',
         minute2_1:'',
         minute2_2:'',
-        minute2_3:'',
-        buttontype:[{type:'primary','name':'星期一'},{type:'primary','name':'星期二'},{type:'primary','name':'星期三'},{type:'primary','name':'星期四'},{type:'primary','name':'星期五'},{type:'info','name':'星期六'},{type:'info','name':'星期天'}],
+        xinqi:'星期六,星期日',
+        buttontype:[{type:'primary','name':'星期一'},{type:'primary','name':'星期二'},{type:'primary','name':'星期三'},{type:'primary','name':'星期四'},{type:'primary','name':'星期五'},{type:'info','name':'星期六'},{type:'info','name':'星期日'}],
       };
     },
     created: function() {
@@ -233,13 +252,11 @@
           //   position: "top-left"
           // });
         });
-
         //点击今天
         let todayBtn = document.querySelector(
           ".el-calendar__button-group .el-button-group>button:nth-child(2)"
         );
         todayBtn.addEventListener("click", () => {
-
           // this.$notify.info({
           //   title: "今天",
           //   message: "今天：" + this.value,
@@ -248,7 +265,34 @@
         });
       });
     },
-    mounted: function() {},
+    mounted()
+    {
+      const mythis=this;
+      ax({
+        method: 'get',
+        url: '/app/data/findData',
+        timeout:15000,
+      }).then(function(res) {
+       // console.log(res.data,"获取考勤日期");
+        const {errorCode,errorMsg,data} = res.data;
+        if (errorCode===200){
+          const  {requestData,total} =JSON.parse(data);
+          requestData.forEach(function (x,index) {
+            mythis.isArrange.push(x.data);
+          });
+        }else {
+          mythis.$message.error(errorMsg);
+        }
+      }).catch(function (error) {
+        console.log("error调用",error);
+        mythis.$message.error('获取数据失败:'+error.message)
+        console.log(window.location.host)
+
+      }).finally(function () {
+        console.log("finally调用");
+       // mthis.loading=false;
+      });
+    },
     methods: {
       //点击日期块
       calendarOnClick(e) {
@@ -258,20 +302,19 @@
         var isPush=true;
         this.isArrange.forEach((value, index) => {
           if (value===e.day){
+            this.isArrange = this.isArrange.filter(function (item) {
+               return item!==value;
+            });
             isPush=false;
              return 0;
           }
-        });//有相同的就不添加
+        });//有相同的就删除
         if (isPush){
           this.isArrange.push(e.day);
         }
+        //排序
+        this.isArrange.sort()
 
-        console.log(e,'oooooo',this.isArrange);
-        // this.$notify.error({
-        //   title: "日历块点击",
-        //   message: e,
-        //   position: "top-left"
-        // });
       },
       load () {//加载更多
         console.log('dddddddd');
@@ -281,15 +324,24 @@
       },
       weekClick(i){//星期点击事件
         console.log(i);
+
         this.buttontype.forEach((value, index) => {
           if (index===i){
             if (value.type==='primary'){
-              value.type='info'
+              value.type='info';
             }else {
               value.type='primary'
             }
           }
         });
+        this.xinqi='';
+        this.buttontype.forEach((value, index) => {
+            if (value.type==='info'){
+              this.xinqi=this.xinqi+value.name+','
+            }
+        });
+        console.log(this.xinqi,'没有选中的星期');
+
       },
       //点击信息块
       infoOnClick() {
@@ -300,24 +352,66 @@
         //this.$refs.calendarForm.dialogFormVisible = true;
       },
       //删除排班
-      infoDel() {
-        this.$confirm("此操作将删除该上班日期, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-            this.$message({
-              type: "success",
-              message: "删除成功!"
-            });
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消删除"
-            });
+      infoDel(item) {
+        this.isArrange = this.isArrange.filter(function (items) {
+          return items!==item;
+        });
+          this.$message({
+            type: "success",
+            message: "删除成功!"
           });
+      },
+      baocun(){
+          if(this.radio==='1'){//2次考勤
+            if (this.startTime1==='' || this.endTime1===''){
+              this.$message.error('请选择上班时间');
+              return ;
+            }
+          }else {//4次考勤
+            if (this.startTime1==='' || this.endTime1==='' || this.startTime2==='' || this.endTime2===''){
+              this.$message.error('请选择上班时间');
+              return ;
+            }
+          }
+
+        const mythis=this;
+        this.loading=true;
+        ax({
+          method: 'post',
+          url: '/app/data/save',
+          timeout:15000,
+          data:{
+            'isArrange':this.isArrange,
+            'radio':this.radio,
+            'startTime1':this.startTime1,
+            'endTime1':this.endTime1,
+            'startTime2':this.startTime2,
+            'endTime2':this.endTime2,
+            'minute1_1':this.minute1_1,
+            'minute1_2':this.minute1_2,
+            'minute1_3':this.minute1_3,
+            'minute2_1':this.minute2_1,
+            'minute2_2':this.minute2_2,
+            'xinqi':this.xinqi,
+          }
+        }).then(function(res) {
+          // console.log(res.data,"获取考勤日期");
+          const {errorCode,errorMsg,data} = res.data;
+          if (errorCode===200){
+           // const  {requestData,total} =JSON.parse(data);
+
+
+          }else {
+            mythis.$message.error(errorMsg);
+          }
+        }).catch(function (error) {
+          console.log("error调用",error);
+          mythis.$message.error('获取数据失败:'+error.message)
+
+        }).finally(function () {
+          console.log("finally调用");
+          mythis.loading=false;
+        });
       }
     }
   };

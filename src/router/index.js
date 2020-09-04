@@ -113,7 +113,7 @@ export const constantRoutesPC = [
         {
           path: '/attendancerecord',
           name: '考勤记录',
-          component: () => import('@/views/kaoqing/index'),
+          component: () => import('@/views/kaoqing/index_jilu'),
           meta: { title: '考勤记录', icon: 'kaoqingjilu' }
         }
       ]
