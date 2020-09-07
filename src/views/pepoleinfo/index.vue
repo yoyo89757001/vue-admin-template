@@ -211,7 +211,8 @@
             this.$message.error("请选择上传底库");
             return
           }
-           if (!this.pepoleTypeDisabled){
+           if (!this.pepoleTypeDisabled){//是访客
+             this.formUp.department='';
             if (this.formUp.startTime==='' || this.formUp.endTime===''){
               this.$message.error("过期时间不能为空");
               return

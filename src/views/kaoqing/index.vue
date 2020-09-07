@@ -105,15 +105,15 @@
       <div style="margin-top: 20px">
         晚于
         <el-input v-model="minute1_1" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
-        为<span style="color: red"><strong>迟到</strong></span>
+        (分钟)为<span style="color: red"><strong>迟到</strong></span>
 
         <span style="margin-left: 10vw">早于</span>
         <el-input v-model="minute1_2" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
-        为<span style="color: red"><strong>早退</strong></span>
+        (分钟)为<span style="color: red"><strong>早退</strong></span>
 
         <span style="margin-left: 10vw">下班后</span>
         <el-input v-model="minute1_3" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
-        为<span style="color: red"><strong>加班</strong></span>
+        (分钟)为<span style="color: red"><strong>加班</strong></span>
 
       </div>
     </div>
@@ -165,15 +165,15 @@
       <div style="margin-top: 20px">
         晚于
         <el-input v-model="minute1_1" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
-        为<span style="color: red"><strong>迟到</strong></span>
+        (分钟)为<span style="color: red"><strong>迟到</strong></span>
 
         <span style="margin-left: 10vw">早于</span>
         <el-input v-model="minute1_2" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
-        为<span style="color: red"><strong>早退</strong></span>
+        (分钟)为<span style="color: red"><strong>早退</strong></span>
 
         <span style="margin-left: 10vw">下班后</span>
         <el-input v-model="minute1_3" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
-        为<span style="color: red"><strong>加班</strong></span>
+        (分钟)为<span style="color: red"><strong>加班</strong></span>
 
       </div>
     </div>
@@ -183,16 +183,15 @@
     <div style="margin-top: 20px;margin-left: 20px">
       迟到超过
       <el-input v-model="minute2_1" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
-      为<span style="color: red"><strong>缺勤</strong></span>
+      (分钟)为<span style="color: red"><strong>缺勤</strong></span>
       <span style="margin-left: 10vw">早退超过</span>
       <el-input v-model="minute2_2" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
-      为<span style="color: red"><strong>缺勤</strong></span>
+      (分钟)为<span style="color: red"><strong>缺勤</strong></span>
     </div>
     <el-divider></el-divider>
     <div style="width: 100%;text-align: center;margin-bottom: 80px;margin-top: 10px">
       <el-button type="primary" @click="baocun">保存设置</el-button>
     </div>
-
 
   </div>
 </template>
@@ -214,11 +213,11 @@
         endTime1:'',
         startTime2:'',
         endTime2:'',
-        minute1_1:'',
-        minute1_2:'',
-        minute1_3:'',
-        minute2_1:'',
-        minute2_2:'',
+        minute1_1:0,
+        minute1_2:0,
+        minute1_3:0,
+        minute2_1:0,
+        minute2_2:0,
         xinqi:'星期六,星期日',
         buttontype:[{type:'primary','name':'星期一'},{type:'primary','name':'星期二'},{type:'primary','name':'星期三'},{type:'primary','name':'星期四'},{type:'primary','name':'星期五'},{type:'info','name':'星期六'},{type:'info','name':'星期日'}],
       };
@@ -373,6 +372,21 @@
               return ;
             }
           }
+          if (this.minute1_1===''){
+            this.minute1_1=0;
+          }
+          if (this.minute1_2===''){
+            this.minute1_2=0;
+          }
+          if (this.minute1_3===''){
+            this.minute1_3=0;
+          }
+          if (this.minute2_1==='' ){
+            this.minute2_1=0
+          }
+          if (this.minute2_2===''){
+            this.minute2_2=0;
+          }
 
         const mythis=this;
         this.loading=true;
@@ -398,9 +412,12 @@
           // console.log(res.data,"获取考勤日期");
           const {errorCode,errorMsg,data} = res.data;
           if (errorCode===200){
-           // const  {requestData,total} =JSON.parse(data);
-
-
+            const {code,msg} = JSON.parse(data);
+            if (code===1){
+              mythis.$message.success(msg);
+            }else {
+              mythis.$message.error(msg);
+            }
           }else {
             mythis.$message.error(errorMsg);
           }

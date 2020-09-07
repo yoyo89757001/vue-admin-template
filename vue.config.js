@@ -30,6 +30,7 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
+    disableHostCheck: true,//内网穿透工具我是用的frps做的，最后通过google找到方法，在vue-cli版本为2.x的情况下修改webpack.dev.conf.js中的devServer对象加入disableHostCheck: true即可转发成功
     port: port,
     open: true,
     overlay: {
@@ -90,7 +91,7 @@ module.exports = {
             // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
-            .end()
+            .end();
           config
             .optimization.splitChunks({
               chunks: 'all',
