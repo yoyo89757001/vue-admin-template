@@ -8,6 +8,15 @@ export function getPeople(data) {
   })
 }
 
+export function getKQ(data) {
+  return request({
+    url: 'app/kaoqing/findByPage',
+    method: 'post',
+    data
+  })
+}
+
+
 export function getDepartment(data) {
   return request({
     url: 'app/department/findByPage',

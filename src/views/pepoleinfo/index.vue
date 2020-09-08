@@ -274,7 +274,7 @@
             }).catch(function (error) {
               console.log("error调用",error);
               mthis.$message.error('上传失败:'+error.message)
-              console.log(window.location.host)
+             // console.log(window.location.host)
 
             }).finally(function () {
               console.log("finally调用");

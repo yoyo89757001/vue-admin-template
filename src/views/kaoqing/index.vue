@@ -176,6 +176,17 @@
         (分钟)为<span style="color: red"><strong>加班</strong></span>
 
       </div>
+      <el-divider></el-divider>
+      <div style="margin-top: 20px">
+        中午下班后
+        <el-input v-model="minute1_4" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
+        (分钟)为<span style="color: red"><strong>有效打卡</strong></span>
+
+        <span style="margin-left: 10vw">下午上班提前</span>
+        <el-input v-model="minute1_5" placeholder="分钟" style="width: 5vw;margin-left: 8px;margin-right: 8px" oninput="value=value.replace(/[^\d]/g,'')" maxlength="5"></el-input>
+        (分钟)为<span style="color: red"><strong>有效打卡</strong></span>
+
+      </div>
     </div>
     <el-divider></el-divider>
     <p style="margin-left: 20px;color: #409EFF;margin-bottom: 20px">缺勤设定</p>
@@ -199,7 +210,7 @@
   // import calendarDrawer from "../calendar/calendar-drawer.vue";
  // import calendarForm from "../calendar/calendar-form.vue";
   import  ax from 'axios'
-
+  import {getConfig} from '@/api/people'
 
   export default {
     components: {  },
@@ -216,6 +227,8 @@
         minute1_1:0,
         minute1_2:0,
         minute1_3:0,
+        minute1_4:30,
+        minute1_5:30,
         minute2_1:0,
         minute2_2:0,
         xinqi:'星期六,星期日',
@@ -285,12 +298,55 @@
       }).catch(function (error) {
         console.log("error调用",error);
         mythis.$message.error('获取数据失败:'+error.message)
-        console.log(window.location.host)
 
       }).finally(function () {
         console.log("finally调用");
        // mthis.loading=false;
       });
+
+      this.loading=true;
+      getConfig().then(response => {
+        mythis.loading=false;
+        const  {data} =response;
+        const {kqOneFour,wook1,offDuty1,wook2,offDuty2,chidao,zaotui,jiaban,queqing1,queqing2,youxiao1,youxiao2,weekDate} =JSON.parse(data);
+        if (kqOneFour===0){
+          mythis.radio="1";
+        }else {
+          mythis.radio="2";
+        }
+        mythis.startTime1=wook1;
+        mythis.endTime1=offDuty1;
+        mythis.startTime2=wook2;
+        mythis.endTime2=offDuty2;
+        mythis.minute1_1=chidao;
+        mythis.minute1_2=zaotui;
+        mythis.minute1_3=jiaban;
+        mythis.minute1_4=youxiao1;
+        mythis.minute1_5=youxiao2;
+        mythis.minute2_1=queqing1;
+        mythis.minute2_2=queqing2;
+        mythis.xinqi=weekDate;
+        var wk=weekDate.split(",");
+        this.buttontype.forEach((value, index) => {
+            var kk =false;
+            wk.forEach((value1, index1) => {
+              if (value1===value.name){
+                kk =true;//表示不需要上班 灰色
+              }
+            });
+            if (kk){
+              value.type='info';
+            }else {
+              value.type='primary'
+            }
+        });
+
+      }).catch((err) => {
+        mythis.loading=false;
+        mythis.$message.error(err);
+        console.log("请求设置失败:"+err)
+      });
+
     },
     methods: {
       //点击日期块
@@ -381,12 +437,23 @@
           if (this.minute1_3===''){
             this.minute1_3=0;
           }
+          if (this.minute1_4===''){
+            this.minute1_4=0;
+          }
+          if (this.minute1_5===''){
+            this.minute1_5=0;
+          }
           if (this.minute2_1==='' ){
             this.minute2_1=0
           }
           if (this.minute2_2===''){
             this.minute2_2=0;
           }
+          if (this.minute1_4===0 || this.minute1_5===0){
+            this.$message.error('打卡有效时间不能为空或零');
+            return ;
+          }
+
 
         const mythis=this;
         this.loading=true;
@@ -404,6 +471,8 @@
             'minute1_1':this.minute1_1,
             'minute1_2':this.minute1_2,
             'minute1_3':this.minute1_3,
+            'minute1_4':this.minute1_4,
+            'minute1_5':this.minute1_5,
             'minute2_1':this.minute2_1,
             'minute2_2':this.minute2_2,
             'xinqi':this.xinqi,

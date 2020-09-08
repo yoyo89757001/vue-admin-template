@@ -2,21 +2,12 @@
   <div>
     <el-row class="warpe">
 
-      <el-col :span="16">
-        <el-popover
-          placement="top"
-          width="180"
-          visible-arrow="true">
-          <p>您确定要删除选中的吗？</p>
-          <div style="text-align: center;">
-            <el-button size="mini" type="text" @click="handleClickall(3)">取消</el-button>
-            <el-button type="danger" size="mini" @click="handleClickall(2)">确定</el-button>
-          </div>
-          <el-button  slot="reference" type="danger" size="mini" v-show="isSC">删除选中</el-button>
-        </el-popover>
+      <el-col :span="10">
+
 
       </el-col>
-      <el-col :span="4" style="text-align: right;justify-items: right;justify-content: right">
+      <el-col :span="10" style="text-align: right;justify-items: right;justify-content: right">
+        <el-date-picker type="month" placeholder="选择月份" v-model="mydate" style="width: 9vw;"></el-date-picker>
         <el-input
           style="width: 7vw;margin: 1vw;align-items: center"
           fixed="right"
@@ -26,12 +17,17 @@
         </el-input>
       </el-col>
       <el-col :span="2" style="margin-left: 10px" >
-        <el-button type="primary" @click="finds">搜索员工</el-button>
+        <el-button type="primary" @click="finds">搜索</el-button>
       </el-col>
       <el-col :span="2">
-        <el-button type="warning" style="margin-left: 10px" @click="handleClickAddPepole">新增人员</el-button>
+        <download-excel
+          :name="excalName"
+          :fields="json_fields"
+          :before-generate="daochuzhiqian"
+          :data = "json_data">
+          <el-button type="warning" style="margin-left: 10px" @click="handleClickAddPepole">导出Excel</el-button>
+        </download-excel>
       </el-col>
-
 
     </el-row>
 
@@ -44,13 +40,8 @@
       border
       stripe
       tooltip-effect="dark"
-      style="width: 100%"
+      style="width: 100%;margin-left: 4px;margin-right: 4px"
       @selection-change="handleSelectionChange">
-      <el-table-column
-        align="center"
-        type="selection"
-        width="65">
-      </el-table-column>
       <!--    header-align="center" 只表头居中 align="center"：表头和内容都居中-->
       <el-table-column
         prop="name"
@@ -72,52 +63,35 @@
         width="150">
       </el-table-column>
       <el-table-column
-        label="性别"
+        label="迟到"
         align="center"
-        width="120"
-        show-overflow-tooltip>
-        <span slot-scope="scope" v-if="scope.row.sex==='1'">男</span>
-        <span slot-scope="scope" v-else>女</span>
+        prop="lateNumber"
+        width="160">
       </el-table-column>
       <el-table-column
-        prop="icCard"
-        label="IC卡号"
+        label="早退"
         align="center"
-        width="136"
-        show-overflow-tooltip>
+        prop="leaveEarlyNumber"
+        width="160">
       </el-table-column>
       <el-table-column
-        prop="birthday"
-        label="出生日期"
+        label="缺勤"
         align="center"
-        width="136"
-        show-overflow-tooltip>
+        prop="absenteeismNumber"
+        width="150">
       </el-table-column>
       <el-table-column
-        prop="phone"
-        label="手机号码"
-        show-overflow-tooltip>
+        label="加班(小时)"
+        align="center"
+        prop="overtimeTime"
+        width="150">
       </el-table-column>
       <el-table-column
-        align="center"
-        fixed="right"
-        label="操作"
-        width="170">
-        <template slot-scope="scope">
-          <el-button @click="handleClick(scope.$index,1)" type="primary" size="small">编辑</el-button>
-          <el-popover
-            placement="top"
-            width="152"
-            visible-arrow="true">
-            <p style="text-align: center">您确定要删除吗？</p>
-            <div style="text-align: center;">
-              <el-button size="mini" type="text" @click="handleClick(scope.$index,3)">取消</el-button>
-              <el-button type="danger" size="mini" @click="handleClick(scope.$index,2)">确定</el-button>
-            </div>
-            <el-button slot="reference" type="danger" size="small" style="margin-left: 10px">删除</el-button>
-          </el-popover>
-        </template>
+        prop="yearMonth"
+        label="考勤时间"
+        show-overflow-tooltip>
       </el-table-column>
+
     </el-table>
     <!--    底部分页-->
     <el-pagination style="margin-top: 10px;margin-bottom: 12px"
@@ -135,8 +109,9 @@
 
 <script>
 
-  import {getPeople,deletePeople,getPeopleInfoFind} from '@/api/people'
+  import {getKQ} from '@/api/people'
   import Moment from 'moment' //需要安装  npm install moment --save
+  import  ax from 'axios'
 
   export default {
     data() {
@@ -152,45 +127,52 @@
         pageSize:12,//默认每页显示10条
         input: '', //搜素的输入值
         isSC:false,
+        json_data:[{ID:123,name:'成',department:'销售部'}],
+        excalName:'',
+        json_fields: {
+          "ID": "sid",    //常规字段
+          "姓名": "name",
+          "部门": "department",
+
+
+        },
+        mydate:new Date()
       }
     },
 
     created() {
-
 
     },
     mounted() {
       //界面绘制已完成
       const mythis=this;
       this.loding=true;
-      getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
+      getKQ({page:this.currentPage-1,size:this.pageSize,time:Moment(Number(new Date())).format('YYYY-MM'),name:""}).then(response => {
         mythis.loding=false;
         // console.log("获取人员列表",response);
         const  {data,errorCode} =response;
-        const  {requestData,total} =JSON.parse(data);
+        const  {requestData,total,radio} =JSON.parse(data);
         mythis.totalNum=total;
         if (requestData.length>0){
           mythis.singlepage=false;//数量大于1时 显示分页
         }
         requestData.forEach(function (x, index) {//遍历插入
-          if (x.birthday!==undefined && x.birthday!==0){//没有时间
-            // console.log(x.birthday,'x.birthday');
-            //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
-            // console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
-            x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-          }else {
-            x.birthday='';
-          }
-          if (x.icCard===undefined || x.icCard===''){
-            x.icCard='未绑定';
-          }
+          var l=x.lateNumber+x.lateNumber2;
+          x.lateNumber=x.late+'次'+'(共'+l+'分钟)';
+
+          var t=x.leaveEarlyNumber+x.leaveEarlyNumber2;
+          x.leaveEarlyNumber=x.leaveEarly+'次'+'(共'+t+'分钟)';
+
+          x.overtimeTime=x.overtimeTime+'小时';
+
+          x.absenteeismNumber=(x.absenteeismNumber+x.absenteeismNumber2)+'次';
+
           mythis.tableDataTemp.push(x);
         });
       }).catch((err) => {
         mythis.loding=false;
         console.log("请求失败:"+err)
       });
-
 
     },
     methods: {
@@ -202,44 +184,6 @@
         //   console.log("val:"+va.id)
         // });
       },
-      handleClick(row,type) {//删除单个
-        //console.log(row);
-        //console.log("列:"+row+type);
-        var mythis=this;
-        if (type===2 || type===3){//2删除 3取消
-          this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
-          if (type===2){//删除数据
-            this.loding=true;
-            deletePeople(this.tableDataTemp[row].sid).then(response => {
-              mythis.loding=false;
-              console.log("删除人员返回",response);
-              const  {data} =response;
-              const  {code,msg} =JSON.parse(data);
-              if (code===1){
-                //this.totalNum=this.totalNum-1;
-                mythis.tableDataTemp.splice(row,1); //注意，
-                //  console.log(`当前页:`,this.currentPage,(this.tableDataTemp.length));
-                if (mythis.tableDataTemp.length===0 && mythis.currentPage>1){ //每次删除后重新请求，因为有分页，最后一条的时候数据不好处理，会乱，
-                  mythis.handleCurrentChange(mythis.currentPage-1);//请求前一
-                  // console.log('减一');
-                }else {
-                  // console.log('没减一');
-                  mythis.handleCurrentChange(mythis.currentPage)////请求当前页
-                }
-
-              }else {
-                mythis.$message.error(msg)
-              }
-            }).catch((err) => {
-              mythis.loding=false;
-              console.log("请求失败:"+err)
-            });
-          }
-        }else {//编辑,带上id
-          this.$router.replace('/pepoleinfo_employee?id='+this.tableDataTemp[row].sid)
-          // myId:this.$route.query.id,//拿到上个界面传过来的参数
-        }
-      },
       handleSizeChange(val) {
         // console.log(`每页 ${val} 条`);
         this.pageSize = val;    //动态改变
@@ -250,24 +194,24 @@
         this.tableDataTemp=[];//先清掉数据
         const mythis=this;
         this.loding=true;
-        getPeople({page:this.currentPage-1,size:this.pageSize,peopleType:1}).then(response => {
+        getKQ({page:this.currentPage-1,size:this.pageSize,time:Moment(Number(this.mydate)).format('YYYY-MM'),name:this.input}).then(response => {
           mythis.loding=false;
-          //console.log("获取人员列表",response);
           const  {data,errorCode} =response;
-          const  {requestData,total} =JSON.parse(data);
+          const  {requestData,total,radio} =JSON.parse(data);
           mythis.totalNum=total;
+          if (requestData.length>0){
+            mythis.singlepage=false;//数量大于1时 显示分页
+          }
           requestData.forEach(function (x, index) {//遍历插入
-            if (x.birthday!==undefined){//没有时间
-              // console.log(x.birthday,'x.birthday');
-              //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
-              // console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
-              x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-            }else {
-              x.birthday='';
-            }
-            if (x.icCard===undefined || x.icCard===''){
-              x.icCard='未绑定';
-            }
+            var l=x.lateNumber+x.lateNumber2;
+            x.lateNumber=x.late+'次'+'(共'+l+'分钟)';
+
+            var t=x.leaveEarlyNumber+x.leaveEarlyNumber2;
+            x.leaveEarlyNumber=x.leaveEarly+'次'+'(共'+t+'分钟)';
+
+            x.overtimeTime=x.overtimeTime+'小时';
+
+            x.absenteeismNumber=(x.absenteeismNumber+x.absenteeismNumber2)+'次';
             mythis.tableDataTemp.push(x);
           });
         }).catch((err) => {
@@ -275,81 +219,80 @@
           console.log("请求失败:"+err)
         });
       },
-      handleClickall(type) {//删除所有选中
-        //console.log(type);
-        if (type===2 || type===3){
-          this.$refs.multipleTable.$el.click(); //因为el-popover在列表中会有点击不消失的坑，所以用这个方式来模拟点击让弹窗消失。
-          if (type===2){//删除数据
-            // console.log("删除所有选中");
-            this.isSC=false;
-            var ids='';
-            var mythis=this;
-            this.multipleSelection.forEach(function (x,index) {
-              ids=ids+x.sid;
-              if (index!==mythis.multipleSelection.length-1){
-                ids=ids+',';
-              }
-            });
-            this.loding=true;
-            deletePeople(ids).then(response => {
-              mythis.loding=false;
-              // console.log("删除人员返回",response);
-              const  {data} =response;
-              const  {code,msg} =JSON.parse(data);
-              if (code===1){
-                if (mythis.multipleSelection.length===mythis.tableDataTemp.length && mythis.currentPage>1){ //每次删除后重新请求，因为有分页，最后一条的时候数据不好处理，会乱，//就是全选了 需要减一页
-                  mythis.handleCurrentChange(mythis.currentPage-1);//请求前一
-                  //删除后重新调用获取列表方法
-                }else {
-                  //删除后重新调用获取列表方法
-                  mythis.handleCurrentChange(mythis.currentPage)////请求当前页
-                }
-              }else {
-                mythis.$message.error(msg)
-              }
-            }).catch((err) => {
-              mythis.loding=false;
-              console.log("请求失败:"+err)
-            });
-          }
-        }
+      handleClickAddPepole(){//导出excal
+
       },
-      handleClickAddPepole(){//新增人员
-        this.$router.replace('/pepoleinfo')
+      daochuzhiqian(){
+        this.loding=true;
+        this.excalName=Moment(Number(new Date())).format('YYYY-MM')+'考勤表.xls';
+        // return new Promise((resolve, reject) => {
+        //   setTimeout(() => {
+        //     resolve()
+        //   }, 5000)
+        // })
+        let fd = new FormData();//转成FormData格式上传
+        fd.append('time',this.excalName);
+        var mthis=this;
+        ax({
+          method: 'post',
+          url: '/app/get/excal',
+          timeout:50000,
+          data:fd,
+        }).then(function(res) {
+          console.log(res.data,"获取excal");
+          const {errorCode,errorMsg,data} = res.data;
+          if (errorCode===200){
+            const {code,msg} = JSON.parse(data);
+            if (code===1){
+              mthis.$message.success('添加成功');
+              if (mthis.formUp.peopleType===1){
+                mthis.$router.push('/table')
+              }else {
+                mthis.$router.push('/tree')
+              }
+
+            }else {
+              mthis.$message.error(msg);
+            }
+          }else {
+            mthis.$message.error(errorMsg);
+          }
+        }).catch(function (error) {
+          console.log("error调用",error);
+          mthis.$message.error('上传失败:'+error.message)
+
+        }).finally(function () {
+          console.log("finally调用");
+          mthis.loding=false;
+        });
       },
       finds(){//搜索
-        if (this.input.trim()===''){
-          return;
-        }
         var mythis=this;
         this.loding=true;
-        getPeopleInfoFind({name:this.input,type:1}).then(response => {
+        this.tableDataTemp=[];//先清掉数据
+        this.currentPage=1;
+        getKQ({page:this.currentPage-1,size:this.pageSize,time:Moment(Number(this.mydate)).format('YYYY-MM'),name:this.input}).then(response => {
           mythis.loding=false;
-          const  {data} =response;
-          console.log("搜索人员返回",data);
-          var de=JSON.parse(data);
-          if (de!==undefined && de.length>0){
-            mythis.tableDataTemp=[];//先清掉数据
-            mythis.totalNum=de.length;
-            de.forEach(function (x, index) {//遍历插入
-              if (x.birthday !== undefined && x.birthday !== 0) {//没有时间
-                //console.log(x.birthday,'x.birthday');
-                //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
-                //console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
-                x.birthday = Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-                x.startTime = Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
-                x.endTime = Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
-              } else {
-                x.birthday = '';
-              }
-              if (x.icCard===undefined || x.icCard===''){
-                x.icCard='未绑定';
-              }
-              mythis.tableDataTemp.push(x);
-            });
+          const  {data,errorCode} =response;
+          const  {requestData,total,radio} =JSON.parse(data);
+          mythis.totalNum=total;
+          if (requestData.length>0){
+            mythis.singlepage=false;//数量大于1时 显示分页
           }else {
-            mythis.$message.error('未搜索到人员')
+            mythis.$message.error('未搜索到数据')
           }
+          requestData.forEach(function (x, index) {//遍历插入
+            var l=x.lateNumber+x.lateNumber2;
+            x.lateNumber=x.late+'次'+'(共'+l+'分钟)';
+
+            var t=x.leaveEarlyNumber+x.leaveEarlyNumber2;
+            x.leaveEarlyNumber=x.leaveEarly+'次'+'(共'+t+'分钟)';
+
+            x.overtimeTime=x.overtimeTime+'小时';
+
+            x.absenteeismNumber=(x.absenteeismNumber+x.absenteeismNumber2)+'次';
+            mythis.tableDataTemp.push(x);
+          });
         }).catch((err) => {
           mythis.loding=false;
           console.log("请求失败:"+err)

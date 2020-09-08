@@ -22,7 +22,9 @@ Vue.prototype.$echarts = echarts;
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import JsonExcel from 'vue-json-excel'
 
+Vue.component('downloadExcel', JsonExcel)
 
 
 /**

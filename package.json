@@ -29,6 +29,7 @@
     "vant": "^2.10.3",
     "vconsole": "^3.3.4",
     "vue": "2.6.10",
+    "vue-json-excel": "^0.2.98",
     "vue-router": "3.0.6",
     "vuex": "3.1.0"
   },
