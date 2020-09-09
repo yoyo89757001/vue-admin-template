@@ -24,6 +24,7 @@
           :name="excalName"
           :fields="json_fields"
           :before-generate="daochuzhiqian"
+          :before-finish="finishs"
           :data = "json_data">
           <el-button type="warning" style="margin-left: 10px" @click="handleClickAddPepole">导出Excel</el-button>
         </download-excel>
@@ -127,13 +128,21 @@
         pageSize:12,//默认每页显示10条
         input: '', //搜素的输入值
         isSC:false,
-        json_data:[{ID:123,name:'成',department:'销售部'}],
+        json_data:[],
         excalName:'',
         json_fields: {
           "ID": "sid",    //常规字段
           "姓名": "name",
           "部门": "department",
-
+          "正常打卡次数": 'normalNumber',
+          "迟到总时长(分钟)": "lateNumber",
+          "早退总时长(分钟)": "leaveEarlyNumber",
+          "缺勤次数": "absenteeismNumber",
+          "加班总时长(小时)": "overtimeTime",
+          "迟到总次数": "late",
+          "早退总次数": "leaveEarly",
+          "打卡月份": "yearMonth",
+          "IC卡": 'icCard',
 
         },
         mydate:new Date()
@@ -222,49 +231,49 @@
       handleClickAddPepole(){//导出excal
 
       },
+      finishs(){
+        console.log('结束之前')
+
+      },
       daochuzhiqian(){
         this.loding=true;
-        this.excalName=Moment(Number(new Date())).format('YYYY-MM')+'考勤表.xls';
-        // return new Promise((resolve, reject) => {
-        //   setTimeout(() => {
-        //     resolve()
-        //   }, 5000)
-        // })
-        let fd = new FormData();//转成FormData格式上传
-        fd.append('time',this.excalName);
-        var mthis=this;
-        ax({
-          method: 'post',
-          url: '/app/get/excal',
-          timeout:50000,
-          data:fd,
-        }).then(function(res) {
-          console.log(res.data,"获取excal");
-          const {errorCode,errorMsg,data} = res.data;
-          if (errorCode===200){
-            const {code,msg} = JSON.parse(data);
-            if (code===1){
-              mthis.$message.success('添加成功');
-              if (mthis.formUp.peopleType===1){
-                mthis.$router.push('/table')
+        this.excalName=Moment(Number(this.mydate)).format('YYYY-MM')+'考勤表.xls';
+        return new Promise((resolve, reject) => {
+
+          let fd = new FormData();//转成FormData格式上传
+          fd.append('time',Moment(Number(this.mydate)).format('YYYY-MM'));
+          var mthis=this;
+          ax({
+            method: 'post',
+            url: '/app/get/excal',
+            timeout:50000,
+            data:fd,
+          }).then(function(res) {
+            //  console.log(res.data,"获取excal");
+            const {errorCode,errorMsg,data} = res.data;
+            if (errorCode===200){
+              const {requestData,msg} = JSON.parse(data);
+              if (requestData.length>0){
+                mthis.json_data=[];
+                requestData.forEach(function (x,d) {
+                  mthis.json_data.push(x)
+                });
               }else {
-                mthis.$router.push('/tree')
+                mthis.$message.error('当前没有可以导出的数据');
               }
-
             }else {
-              mthis.$message.error(msg);
+              mthis.$message.error(errorMsg);
             }
-          }else {
-            mthis.$message.error(errorMsg);
-          }
-        }).catch(function (error) {
-          console.log("error调用",error);
-          mthis.$message.error('上传失败:'+error.message)
-
-        }).finally(function () {
-          console.log("finally调用");
-          mthis.loding=false;
+          }).catch(function (error) {
+            console.log("error调用",error);
+            mthis.$message.error('导出失败:'+error.message)
+          }).finally(function () {
+            console.log("finally调用");
+            mthis.loding=false;
+            resolve();
+          });
         });
+
       },
       finds(){//搜索
         var mythis=this;

@@ -281,6 +281,26 @@ export const constantRoutesMB = [
     ]
   },
   {
+    path: '/attendance',
+    component: Layout,
+    name: '考勤管理',
+    meta: { title: '考勤管理', icon: 'kaoqing' },
+    children: [
+      {
+        path: '/attendancerules',
+        name: '考勤规则',
+        component: () => import('@/views/kaoqing/index'),
+        meta: { title: '考勤规则', icon: 'kaoqingguize' }
+      },
+      {
+        path: '/attendancerecord',
+        name: '考勤记录',
+        component: () => import('@/views/kaoqing/index_jilu'),
+        meta: { title: '考勤记录', icon: 'kaoqingjilu' }
+      }
+    ]
+  },
+  {
     path: '/department',
     component: Layout,
     children: [
