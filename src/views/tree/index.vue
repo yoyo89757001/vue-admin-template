@@ -183,11 +183,11 @@
             //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
             //console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
             x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-            x.startTime=Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
-            x.endTime=Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
           }else {
             x.birthday='';
           }
+          x.startTime=Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
+          x.endTime=Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
           if (x.icCard===undefined || x.icCard===''){
             x.icCard='未绑定';
           }
@@ -269,11 +269,12 @@
               //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
               // console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
               x.birthday=Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-              x.startTime=Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
-              x.endTime=Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
+
             }else {
               x.birthday='';
             }
+            x.startTime=Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
+            x.endTime=Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
             if (x.icCard===undefined || x.icCard===''){
               x.icCard='未绑定';
             }
@@ -346,11 +347,11 @@
                 //  x.birthday=Moment(stamp).format('YYYY-MM-DD HH:mm:ss');
                 //console.log(Moment(Number(x.birthday)).format('YYYY年MM月DD日'),'格式化');//格式化时间
                 x.birthday = Moment(Number(x.birthday)).format('YYYY年MM月DD日');
-                x.startTime = Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
-                x.endTime = Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
               } else {
                 x.birthday = '';
               }
+              x.startTime = Moment(Number(x.startTime)).format('YYYY-MM-DD HH:mm:ss');
+              x.endTime = Moment(Number(x.endTime)).format('YYYY-MM-DD HH:mm:ss');
               if (x.icCard===undefined || x.icCard===''){
                 x.icCard='未绑定';
               }
