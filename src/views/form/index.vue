@@ -297,7 +297,7 @@ export default {
         cameraPreviewRotation2:0,//红外预览方向
         faceRotation2:0,//红外算法方向
         msrBitmapRotation:0,//陌生人抓拍方向
-        dangqianChengShi2:'ZL001',//当前机型 0，亮钻，1，智连，2涂鸦
+        dangqianChengShi2:'',//当前机型 0，亮钻，1，智连，2涂鸦
         mima1:'',
         mimanew:'',
       },
