@@ -64,6 +64,12 @@
         width="150">
       </el-table-column>
       <el-table-column
+        label="正常打卡"
+        align="center"
+        prop="normalNumber"
+        width="160">
+      </el-table-column>
+      <el-table-column
         label="迟到"
         align="center"
         prop="lateNumber"
